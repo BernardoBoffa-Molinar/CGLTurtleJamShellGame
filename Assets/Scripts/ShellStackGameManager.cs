@@ -25,6 +25,11 @@ public class ShellStackGameManager : MonoBehaviour
     public Slider HPSlider;
     public GameObject PauseMenu;
 
+    public GameObject GameOverMenu;
+
+    public GameObject ShopMenu;
+ 
+
     //EnemySpawener Controll
 
     [SerializeField]
@@ -58,7 +63,11 @@ public class ShellStackGameManager : MonoBehaviour
             int CollectToSpawn = 0;
             if (CollectProbably > 75)
             {
-                CollectToSpawn = CollectablesPrefab.Count;
+                CollectToSpawn = CollectablesPrefab.Count-1;
+            }
+            else
+            {
+
             }
                      
             float ToSpawnDirX = Random.Range(-1.0f, 1.0f);
@@ -141,6 +150,8 @@ public class ShellStackGameManager : MonoBehaviour
     {
         // Logic for starting the game
         // ...
+        GameOverMenu.SetActive(false);
+        ShopMenu.SetActive(false);
         PauseMenu.SetActive( false);
         HPSlider.value = HealhSystem.currentHealth / HealhSystem.maxHealth;
         ShellGameOver = false;
@@ -159,6 +170,7 @@ public class ShellStackGameManager : MonoBehaviour
     {
         // Logic for ending the game
         // ...
+        GameOverMenu.SetActive(true);
     }
 
    
@@ -205,7 +217,7 @@ public class ShellStackGameManager : MonoBehaviour
 
         if (ShellGameOver)
         {
-           
+            EndGame();
         }
 
         
@@ -239,4 +251,64 @@ public class ShellStackGameManager : MonoBehaviour
     }
 
 
+
+
+    public void PowerUp(int AnimalID, int UpgradeId)
+    {
+
+        switch (AnimalID)
+        {
+            //TURTLE
+            case 1:
+                switch (UpgradeId)
+                {
+                    case 1:
+                        HealhSystem.maxHealth += 10;
+                        HealhSystem.currentHealth += 5;
+                        break;
+                    case 2:
+                        PlayerController.TurtleMovementBaseSpeed += 5;
+                        break;
+                    case 3:
+                        PlayerController.TurtleDamage += 5;
+                        break;
+                }
+                break;
+            //CRAB
+            case 2:
+                switch (UpgradeId)
+                {
+                    case 1:
+                        PlayerController.CrabArea += 0.25f;
+                        break;
+                    case 2:
+                        PlayerController.CrabRotationSpeed += 5;
+                        break;
+                    case 3:
+                        PlayerController.CrabDamage += 5;
+                        break;
+                }
+
+                break;
+            //BIRD
+            case 3:
+                switch (UpgradeId)
+                {
+                    case 1:
+                        PlayerController.shootCooldown -=  PlayerController.shootCooldown * 0.1f;
+                        break;
+                    case 2:
+                        PlayerController.BirdThrowSpeed += 5f;
+                        break;
+                    case 3:
+                        PlayerController.BirdDamage += 5f;
+                        break;
+                }
+                break;
+        }
+
+
+
+
+    }
 }

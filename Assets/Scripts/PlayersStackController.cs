@@ -22,18 +22,20 @@ public class PlayersStackController : MonoBehaviour
     public Vector2 CrabAttackDirection;
     public float CrabRotationSpeed = 10;
     public float CrabDamage = 10;
+    public float CrabArea = 1f;
+    public GameObject CrabAreaAttack;
 
-    //CHICKEN MECHANICS
+    //Bird MECHANICS
     [SerializeField]
-    public Vector2 ChickenAimDirection;
-    public float ChickenThrowSpeed = 20;
-    public float ChickenDamage = 10;
+    public Vector2 BirdAimDirection;
+    public float BirdThrowSpeed = 45;
+    public float BirdDamage = 10;
     public Transform ShootingPoint;
-    public GameObject ChickenEggProjectile;
-    public GameObject ChickenBody;
+    public GameObject BirdEggProjectile;
+    public GameObject BirdBody;
     public bool canShoot = true;
     public float shootTimer = 0;
-    float shootCooldown = 1;
+    public float shootCooldown = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -48,7 +50,7 @@ public class PlayersStackController : MonoBehaviour
         {
             TurtleControll(Time.deltaTime);
             CrabControll(Time.deltaTime);
-            ChickenControll(Time.deltaTime);
+            BirdControll(Time.deltaTime);
         }
         else
         {
@@ -130,7 +132,7 @@ public class PlayersStackController : MonoBehaviour
 
 
 
-    void ChickenControll(float dt)
+    void BirdControll(float dt)
     {
         Vector3 mousePosition = Input.mousePosition;
         mousePosition.z = 10;
@@ -140,16 +142,16 @@ public class PlayersStackController : MonoBehaviour
         Vector3 direction = worldPosition - transform.position;
         direction.Normalize();
         //Debug.Log(direction);
-        ChickenAimDirection = new Vector2(direction.x,direction.y);
+        BirdAimDirection = new Vector2(direction.x,direction.y);
 
-        float targetAngle = Mathf.Atan2(ChickenAimDirection.y, ChickenAimDirection.x) * Mathf.Rad2Deg -90f;
+        float targetAngle = Mathf.Atan2(BirdAimDirection.y, BirdAimDirection.x) * Mathf.Rad2Deg -90f;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
-        ChickenBody.transform.rotation = Quaternion.Lerp(ChickenBody.transform.rotation, targetRotation, ChickenThrowSpeed * Time.deltaTime);
+        BirdBody.transform.rotation = Quaternion.Lerp(BirdBody.transform.rotation, targetRotation, BirdThrowSpeed * Time.deltaTime);
 
-       if(Input.GetMouseButtonDown(0) && canShoot)
+       if((Input.GetMouseButtonDown(0)|| Input.GetAxis("Fire1")> 0.1f) && canShoot)
         {
             canShoot = false;
-            ChickenThrowEgg();
+            BirdThrowEgg();
         }
 
         if (!canShoot)
@@ -166,13 +168,19 @@ public class PlayersStackController : MonoBehaviour
     }
 
 
-    void ChickenThrowEgg()
+    void BirdThrowEgg()
     {
-        Vector3 SpawnEggPosition = ChickenBody.transform.position + new Vector3( ChickenAimDirection.x,ChickenAimDirection.y,0f)* 0.25f;
+        Vector3 SpawnEggPosition = BirdBody.transform.position + new Vector3( BirdAimDirection.x,BirdAimDirection.y,0f)* 0.25f;
 
-        GameObject EggProjectile = Instantiate(ChickenEggProjectile, SpawnEggPosition, Quaternion.identity);
-        EggProjectile.GetComponent<Rigidbody2D>().velocity =  -1 * ChickenAimDirection * ChickenThrowSpeed;
-        EggProjectile.GetComponent<EggProjectile>().SetDamage(ChickenDamage);
+        GameObject EggProjectile = Instantiate(BirdEggProjectile, SpawnEggPosition, Quaternion.identity);
+        EggProjectile.GetComponent<Rigidbody2D>().velocity =  -1 * BirdAimDirection * BirdThrowSpeed;
+        EggProjectile.GetComponent<EggProjectile>().SetDamage(BirdDamage);
     }
+
+
+
+  
+
+
 
 }

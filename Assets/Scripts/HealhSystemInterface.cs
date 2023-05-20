@@ -18,6 +18,8 @@ public class HealhSystemInterface : MonoBehaviour
     public SpriteRenderer SP;
     public float EnemySpeed = 10f;
     float targetAngle;
+    public int EnemyIndex = 0;
+    Vector2 MovementDirection;
 
     private void Start()
     {
@@ -84,23 +86,28 @@ public class HealhSystemInterface : MonoBehaviour
             if(currentHealth > 0 )
             {
 
-                Vector3 MoveToPlayer = PlayerController.gameObject.transform.position - transform.position;
 
-                Vector2 MovementDirection = new Vector2(MoveToPlayer.x, MoveToPlayer.y);
-                MovementDirection.Normalize();
-
-              
+   
 
 
                 if (TookDamage)
                 {
+                    Vector3 MoveAwayFromPlayer = -1*(PlayerController.gameObject.transform.position - transform.position);
+
+                    Vector2 MovementDirection = new Vector2(MoveAwayFromPlayer.x, MoveAwayFromPlayer.y);
+                    MovementDirection.Normalize();
                     ImmuneframeTimer += Time.deltaTime;
-                    MovementDirection *= -1f;
-                    if(gameObject.GetComponent<SpriteRenderer>().color == Color.black)
+
+                    GetComponent<Rigidbody2D>().velocity = MovementDirection * EnemySpeed;
+                    if (gameObject.GetComponent<SpriteRenderer>().color == Color.black)
                     {
                         gameObject.GetComponent<SpriteRenderer>().color = Color.red;
                     }
                     else if (gameObject.GetComponent<SpriteRenderer>().color == Color.red)
+                    {
+                        gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                    }
+                    else if(gameObject.GetComponent<SpriteRenderer>().color == Color.white)
                     {
                         gameObject.GetComponent<SpriteRenderer>().color = Color.black;
                     }
@@ -109,28 +116,38 @@ public class HealhSystemInterface : MonoBehaviour
                     {
                         TookDamage = false;
                         ImmuneframeTimer = 0f;
+                        
                         gameObject.GetComponent<SpriteRenderer>().color = Color.white;
                     }
-                }
 
-
-                targetAngle = Mathf.Atan2(MovementDirection.y, MovementDirection.x) * Mathf.Rad2Deg;
-                Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle- 90);
-        
-
-                gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, targetRotation, EnemySpeed * Time.deltaTime);
-
-                if (!GameController.IsPaused)
-                {
-                    SP.flipX = MovementDirection.x < 0 ? true : false;
-                    GetComponent<Rigidbody2D>().velocity = MovementDirection * EnemySpeed;
-
-                   
                 }
                 else
                 {
-                    GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                    Vector3 MoveToPlayer = PlayerController.gameObject.transform.position - transform.position;
+
+                    MovementDirection = new Vector2(MoveToPlayer.x, MoveToPlayer.y);
+                    MovementDirection.Normalize();
+
+
+                    targetAngle = Mathf.Atan2(MovementDirection.y, MovementDirection.x) * Mathf.Rad2Deg;
+                    Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle - 90);
+
+
+                    gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, targetRotation, EnemySpeed * Time.deltaTime);
+
+                    if (!GameController.IsPaused)
+                    {
+                        SP.flipX = MovementDirection.x < 0 ? true : false;
+                        GetComponent<Rigidbody2D>().velocity = MovementDirection * EnemySpeed;
+
+
+                    }
+                    else
+                    {
+                        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                    }
                 }
+                
             }
 
 
@@ -233,7 +250,7 @@ public class HealhSystemInterface : MonoBehaviour
         }
         else
         {
-
+            
             //Enemy HealthSystem
             HandleEnemyCollisionsWithPlayer(collision);
            
@@ -250,26 +267,26 @@ public class HealhSystemInterface : MonoBehaviour
 
 
 
-    public void HandleEnemyCollisionsWithPlayer(Collider2D playerweapon) { 
+    public void HandleEnemyCollisionsWithPlayer(Collider2D otherCollider2D) { 
     
             // Check if the collision involves objects with specific tags
-            if (playerweapon.gameObject.CompareTag("EggProjectile") ){
-                if (playerweapon.gameObject.GetComponent<EggProjectile>())
+            if (otherCollider2D.gameObject.CompareTag("EggProjectile") ){
+                if (otherCollider2D.gameObject.GetComponent<EggProjectile>())
                 {
-                    TakeDamage(playerweapon.gameObject.GetComponent<EggProjectile>().EggDamage);
+                    TakeDamage(otherCollider2D.gameObject.GetComponent<EggProjectile>().EggDamage);
                     TookDamage = true;
                     gameObject.GetComponent<SpriteRenderer>().color = Color.black;
                     ImmuneframeDuration = 0.25f;
                 }
             }
-            else if (playerweapon.gameObject.CompareTag("CrabAttackArea")){
+            else if (otherCollider2D.gameObject.CompareTag("CrabAttackArea")){
                 TakeDamage(PlayerController.CrabDamage);
                 TookDamage = true;
                 gameObject.GetComponent<SpriteRenderer>().color = Color.black;
                 ImmuneframeDuration = 0.5f;
 
             }
-            else if(playerweapon.gameObject.CompareTag("TurtleBody") || playerweapon.gameObject.GetComponent<HealhSystemInterface>())
+            else if(otherCollider2D.gameObject.CompareTag("Player") )
             {
                 // Handle collision with the enemy
                 // ...
@@ -278,6 +295,11 @@ public class HealhSystemInterface : MonoBehaviour
                 gameObject.GetComponent<SpriteRenderer>().color = Color.black;
                 ImmuneframeDuration = 1f;
 
+            }else if (otherCollider2D.gameObject.GetComponent<HealhSystemInterface>() && otherCollider2D.gameObject.GetComponent<HealhSystemInterface>().IsPlayer == false)
+             {
+                    MovementDirection =  otherCollider2D.transform.position - gameObject.transform.position;
+                    TookDamage = true;
+                    ImmuneframeDuration = 0.5f;
             }
     }
 }

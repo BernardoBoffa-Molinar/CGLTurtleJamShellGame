@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
-  
+    public bool ColorChange;
    public virtual void Collect(GameObject CollidingObject)
     {
 
