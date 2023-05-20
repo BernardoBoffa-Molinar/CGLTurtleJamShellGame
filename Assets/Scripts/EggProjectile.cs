@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EggProjectile : MonoBehaviour
 {
+
+    public float EggDamage;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,11 +18,19 @@ public class EggProjectile : MonoBehaviour
         
     }
 
+    public void SetDamage(float damageToSet)
+    {
+        EggDamage = damageToSet;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (!other.gameObject.CompareTag("Player"))
         {
+
+
+
+
             Destroy(this.gameObject);
         }
     }

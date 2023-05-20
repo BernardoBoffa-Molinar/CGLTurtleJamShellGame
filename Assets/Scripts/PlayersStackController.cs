@@ -4,27 +4,31 @@ using UnityEngine;
 
 public class PlayersStackController : MonoBehaviour
 {
-
-    public float TurtleMovementSpeed = 10;
-    public float CrabRotationSpeed = 10;
-    public float ChickenThrowSpeed = 20;
+    //TURTLE MECHANICS
+    public GameObject TurtleBody;
     [SerializeField]
     public Vector2 TurtleMovement;
+    public float TurtleMovementSpeed = 10;
+    public float TurtleDamage = 10;
+
+    //CRAB MECHANICS
+    public GameObject CrabBody;
     [SerializeField]
     public Vector2 CrabAttackDirection;
+    public float CrabRotationSpeed = 10;
+    public float CrabDamage = 10;
+
+    //CHICKEN MECHANICS
     [SerializeField]
     public Vector2 ChickenAimDirection;
-    public GameObject CrabBody;
-    public GameObject TurtleBody;
-    public GameObject ChickenBody;
+    public float ChickenThrowSpeed = 20;
+    public float ChickenDamage = 10;
     public Transform ShootingPoint;
-
     public GameObject ChickenEggProjectile;
-
+    public GameObject ChickenBody;
     public bool canShoot = true;
     public float shootTimer = 0;
     float shootCooldown = 1;
-
 
     // Start is called before the first frame update
     void Start()
@@ -96,7 +100,7 @@ public class PlayersStackController : MonoBehaviour
 
         Vector3 direction = worldPosition - transform.position;
         direction.Normalize();
-        Debug.Log(direction);
+        //Debug.Log(direction);
         ChickenAimDirection = new Vector2(direction.z,direction.x);
 
         float targetAngle = Mathf.Atan2(ChickenAimDirection.y, ChickenAimDirection.x) * Mathf.Rad2Deg;
@@ -129,7 +133,7 @@ public class PlayersStackController : MonoBehaviour
 
         GameObject EggProjectile = Instantiate(ChickenEggProjectile, SpawnEggPosition, Quaternion.identity);
         EggProjectile.GetComponent<Rigidbody>().velocity = new Vector3(ChickenAimDirection.y, 0, ChickenAimDirection.x) * ChickenThrowSpeed;
-
+        EggProjectile.GetComponent<EggProjectile>().SetDamage(ChickenDamage);
     }
 
 }

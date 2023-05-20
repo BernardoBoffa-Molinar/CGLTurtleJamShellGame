@@ -177,8 +177,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &1681393228
-CapsuleCollider:
+--- !u!65 &1681393228
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -187,9 +187,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
+  serializedVersion: 2
+  m_Size: {x: 0.99999994, y: 2, z: 0.99999994}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1919642550
 GameObject:
@@ -237,7 +236,7 @@ GameObject:
   - component: {fileID: 1396312022982519322}
   m_Layer: 0
   m_Name: CrabArmRigth
-  m_TagString: Player
+  m_TagString: CrabArms
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -524,7 +523,7 @@ GameObject:
   - component: {fileID: 1396312023642854615}
   m_Layer: 0
   m_Name: TurtleBody
-  m_TagString: Player
+  m_TagString: TurtleBody
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -616,6 +615,7 @@ GameObject:
   - component: {fileID: 1396312024184776770}
   - component: {fileID: 1396312024184776771}
   - component: {fileID: 1396312024184776768}
+  - component: {fileID: 491165136}
   m_Layer: 0
   m_Name: Players
   m_TagString: Player
@@ -653,17 +653,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27e4b838bc3ea014cb2b68948a726481, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TurtleMovementSpeed: 10
-  CrabRotationSpeed: 10
-  ChickenThrowSpeed: 10
-  TurtleMovement: {x: 0, y: 0}
-  CrabAttackDirection: {x: 0, y: 0}
-  ChickenAimDirection: {x: 0, y: 0}
-  CrabBody: {fileID: 1396312023015008015}
   TurtleBody: {fileID: 1396312024452199509}
-  ChickenBody: {fileID: 1919642550}
+  TurtleMovement: {x: 0, y: 0}
+  TurtleMovementSpeed: 10
+  TurtleDamage: 10
+  CrabBody: {fileID: 1396312023015008015}
+  CrabAttackDirection: {x: 0, y: 0}
+  CrabRotationSpeed: 10
+  CrabDamage: 10
+  ChickenAimDirection: {x: 0, y: 0}
+  ChickenThrowSpeed: 10
+  ChickenDamage: 10
   ShootingPoint: {fileID: 1681393227}
   ChickenEggProjectile: {fileID: 8703269369476519419, guid: 2c4cee67b8e479f4cba3ec315cd87b1e, type: 3}
+  ChickenBody: {fileID: 1919642550}
   canShoot: 0
   shootTimer: 0
 --- !u!54 &1396312024184776768
@@ -682,6 +685,25 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 84
   m_CollisionDetection: 0
+--- !u!114 &491165136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1396312024184776797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5461bb83cb70b6a48a2dd63621a340a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsPlayer: 1
+  shield: 0
+  ImmuneframeTimer: 0
+  ImmuneframeDuration: 0.2
+  TookDamage: 0
+  maxHealth: 100
+  PlayerController: {fileID: 0}
 --- !u!1 &1396312024260543006
 GameObject:
   m_ObjectHideFlags: 0
@@ -696,7 +718,7 @@ GameObject:
   - component: {fileID: 1396312024260543004}
   m_Layer: 0
   m_Name: CrabArmLeft
-  m_TagString: Player
+  m_TagString: CrabArms
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
