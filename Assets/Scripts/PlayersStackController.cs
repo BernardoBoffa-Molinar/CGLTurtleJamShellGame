@@ -129,10 +129,10 @@ public class PlayersStackController : MonoBehaviour
 
     void ChickenThrowEgg()
     {
-        Vector3 SpawnEggPosition = ShootingPoint.position + new Vector3( ChickenAimDirection.x,ChickenAimDirection.y,0f)* 0.25f;
+        Vector3 SpawnEggPosition = ChickenBody.transform.position + new Vector3( ChickenAimDirection.x,ChickenAimDirection.y,0f)* 0.25f;
 
         GameObject EggProjectile = Instantiate(ChickenEggProjectile, SpawnEggPosition, Quaternion.identity);
-        EggProjectile.GetComponent<Rigidbody>().velocity = new Vector3(ChickenAimDirection.x,ChickenAimDirection.y,0f) * ChickenThrowSpeed;
+        EggProjectile.GetComponent<Rigidbody2D>().velocity =  ChickenAimDirection * ChickenThrowSpeed;
         EggProjectile.GetComponent<EggProjectile>().SetDamage(ChickenDamage);
     }
 
