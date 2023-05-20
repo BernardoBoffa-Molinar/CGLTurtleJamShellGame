@@ -49,13 +49,13 @@ public class PlayersStackController : MonoBehaviour
     void TurtleControll(float dt)
     {
         //Change Input System Later Maybe
-        TurtleMovement = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        TurtleMovement = new Vector2( -1f*Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
         if(TurtleMovement.magnitude > 0.1f)
         {
-            gameObject.GetComponent<Rigidbody>().velocity = new Vector3(TurtleMovement.x, 0, TurtleMovement.y)  * TurtleMovementSpeed;
-            float targetAngle = Mathf.Atan2(TurtleMovement.x, TurtleMovement.y) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
+            gameObject.GetComponent<Rigidbody>().velocity = new Vector3(TurtleMovement.x, TurtleMovement.y,0)  * TurtleMovementSpeed;
+            float targetAngle = Mathf.Atan2(TurtleMovement.y, TurtleMovement.x) * Mathf.Rad2Deg - 90f;
+            Quaternion targetRotation = Quaternion.Euler(0f,0f, targetAngle);
             TurtleBody.transform.rotation = Quaternion.Lerp(TurtleBody.transform.rotation, targetRotation, TurtleMovementSpeed * Time.deltaTime);
 
         }
@@ -78,7 +78,7 @@ public class PlayersStackController : MonoBehaviour
         if (CrabAttackDirection.magnitude > 0.1f)
         {
             float targetAngle = Mathf.Atan2(CrabAttackDirection.y, CrabAttackDirection.x) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
             CrabBody.transform.rotation = Quaternion.Lerp(CrabBody.transform.rotation, targetRotation, CrabRotationSpeed * Time.deltaTime);
         }
         else
@@ -101,10 +101,10 @@ public class PlayersStackController : MonoBehaviour
         Vector3 direction = worldPosition - transform.position;
         direction.Normalize();
         //Debug.Log(direction);
-        ChickenAimDirection = new Vector2(direction.z,direction.x);
+        ChickenAimDirection = new Vector2(direction.x,direction.y);
 
-        float targetAngle = Mathf.Atan2(ChickenAimDirection.y, ChickenAimDirection.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0f, targetAngle, 0f);
+        float targetAngle = Mathf.Atan2(ChickenAimDirection.y, ChickenAimDirection.x) * Mathf.Rad2Deg - 45f;
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
         ChickenBody.transform.rotation = Quaternion.Lerp(ChickenBody.transform.rotation, targetRotation, ChickenThrowSpeed * Time.deltaTime);
 
        if(Input.GetMouseButtonDown(0) && canShoot)
@@ -129,10 +129,10 @@ public class PlayersStackController : MonoBehaviour
 
     void ChickenThrowEgg()
     {
-        Vector3 SpawnEggPosition = ShootingPoint.position + new Vector3( ChickenAimDirection.y,0,ChickenAimDirection.x)* 0.25f;
+        Vector3 SpawnEggPosition = ShootingPoint.position + new Vector3( ChickenAimDirection.x,ChickenAimDirection.y,0f)* 0.25f;
 
         GameObject EggProjectile = Instantiate(ChickenEggProjectile, SpawnEggPosition, Quaternion.identity);
-        EggProjectile.GetComponent<Rigidbody>().velocity = new Vector3(ChickenAimDirection.y, 0, ChickenAimDirection.x) * ChickenThrowSpeed;
+        EggProjectile.GetComponent<Rigidbody>().velocity = new Vector3(ChickenAimDirection.x,ChickenAimDirection.y,0f) * ChickenThrowSpeed;
         EggProjectile.GetComponent<EggProjectile>().SetDamage(ChickenDamage);
     }
 
