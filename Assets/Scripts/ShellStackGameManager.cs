@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class ShellStackGameManager : MonoBehaviour
@@ -21,7 +22,94 @@ public class ShellStackGameManager : MonoBehaviour
     public TMP_Text SnaillScoreText;
     public TMP_Text StageResourcesScoreText;
     public TMP_Text HPText;
+    public Slider HPSlider;
+    public GameObject PauseMenu;
 
+    //EnemySpawener Controll
+
+    [SerializeField]
+    public List<GameObject> EnemiesPrefab;
+
+    public float SpawnDistance = 50f;
+    public float SpawnTimer =0f;
+    public float SpawnColdown = 5f;
+    public int EnemiesSpawnAmmount = 2;
+
+
+
+
+    //EnemySpawener Controll
+
+    [SerializeField]
+    public List<GameObject> CollectablesPrefab;
+
+    public float CollectSpawnMaxDistance = 60f;
+    public float CollectSpawnMinDistance = 30f;
+    public float CollectSpawnTimer = 0f;
+    public float CollectSpawnColdown = 10f;
+    public int CollectableStageIndex = 0;
+    public int CollectablesAmmounts = 3;
+
+    void SpawnCollectables()
+    {
+        for (int i = 0; i < CollectablesAmmounts; i++)
+        {
+            int CollectProbably = Random.Range(0, 100);
+            int CollectToSpawn = 0;
+            if (CollectProbably > 75)
+            {
+                CollectToSpawn = CollectablesPrefab.Count;
+            }
+                     
+            float ToSpawnDirX = Random.Range(-1.0f, 1.0f);
+            float ToSpawnDirY = Random.Range(-1.0f, 1.0f);
+            float distance = Random.Range(CollectSpawnMinDistance, CollectSpawnMaxDistance);
+            Vector3 SpawnPosition = gameObject.transform.position + new Vector3(ToSpawnDirX, ToSpawnDirY, 0).normalized * distance;
+            Instantiate(CollectablesPrefab[CollectToSpawn], SpawnPosition, Quaternion.identity);
+
+        }
+    }
+
+    void CollectablesSpawnnerLogic()
+    {
+        CollectSpawnTimer += Time.deltaTime;
+        if(CollectSpawnTimer>= CollectSpawnColdown)
+        {
+
+            SpawnCollectables();
+            CollectSpawnTimer = 0f;
+        }
+
+
+    }
+
+
+    void EnemiesSpawnerLogic()
+    {
+        SpawnTimer += Time.deltaTime;
+        if(SpawnTimer>= SpawnColdown)
+        {
+            SpawnEnemyWave();
+            SpawnTimer = 0f;
+        }
+
+    }
+
+    void SpawnEnemyWave()
+    {
+        for(int i = 0; i < EnemiesSpawnAmmount; i++)
+        {
+            
+            int EnemyToSpawn = Random.Range(0, EnemiesPrefab.Count);
+            float EnemyToSpawnDirX = Random.Range(-1.0f, 1.0f);
+            float EnemyToSpawnDirY = Random.Range(-1.0f, 1.0f);
+            Vector3 SpawnPosition = gameObject.transform.position + new Vector3(EnemyToSpawnDirX, EnemyToSpawnDirY, 0).normalized * SpawnDistance;
+            Instantiate(EnemiesPrefab[EnemyToSpawn], SpawnPosition, Quaternion.identity);
+
+        }
+
+
+    }
 
     private void Awake()
     {
@@ -41,10 +129,11 @@ public class ShellStackGameManager : MonoBehaviour
 
     private void UpdateTimerText()
     {
-        timerText.text = "Timer: " + GameTimer.ToString("F2");
+        timerText.text = "Timer: " + GameTimer.ToString("F0");
         SnaillScoreText.text = SnailsCount.ToString();
         StageResourcesScoreText.text = StageResources.ToString("F0");
         HPText.text = "HP: " + HealhSystem.currentHealth + " / " + HealhSystem.maxHealth;
+        HPSlider.value =  (float)HealhSystem.currentHealth / (float)HealhSystem.maxHealth;
     }
 
     // Example method
@@ -52,7 +141,8 @@ public class ShellStackGameManager : MonoBehaviour
     {
         // Logic for starting the game
         // ...
-
+        PauseMenu.SetActive( false);
+        HPSlider.value = HealhSystem.currentHealth / HealhSystem.maxHealth;
         ShellGameOver = false;
         PlayerController = GetComponent<PlayersStackController>();
         HealhSystem = GetComponent<HealhSystemInterface>();
@@ -60,6 +150,8 @@ public class ShellStackGameManager : MonoBehaviour
         {
             Debug.LogError("PlayerController component not found!");
         }
+        SpawnCollectables();
+        SpawnEnemyWave();
     }
 
     // Example method
@@ -92,10 +184,13 @@ public class ShellStackGameManager : MonoBehaviour
                 ShellGameOver = true;
             }
 
+            EnemiesSpawnerLogic();
+
             UpdateTimerText();
+            CollectablesSpawnnerLogic();
 
 
-            
+
         }
 
 
@@ -112,6 +207,7 @@ public class ShellStackGameManager : MonoBehaviour
         {
            
         }
+
         
     }
 
@@ -120,15 +216,16 @@ public class ShellStackGameManager : MonoBehaviour
         get { return instance; }
     }
 
-    private void TogglePause()
+    public void TogglePause()
     {
      
 
         if (IsPaused)
         {
             IsPaused = !IsPaused;
+            
             // Pause the game
-         //   Time.timeScale = 0f;
+            //   Time.timeScale = 0f;
             Debug.Log("Game paused");
         }
         else
@@ -138,6 +235,7 @@ public class ShellStackGameManager : MonoBehaviour
            // Time.timeScale = 1f;
             Debug.Log("Game resumed");
         }
+        PauseMenu.SetActive(IsPaused);
     }
 
 

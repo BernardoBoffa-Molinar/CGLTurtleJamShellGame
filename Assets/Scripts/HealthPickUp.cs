@@ -2,40 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourceCollectable : Collectable
+public class HealthPickUp : Collectable
 {
-   public float CollectableTimer;
-   public ShellStackGameManager Manager;
+    public float CollectableTimer;
+    public ShellStackGameManager Manager;
     public float SpeedRotation = 40f;
+    public int HealAmmount = 20;
 
     public override void Collect(GameObject CollidingObject)
     {
-        Manager.StageResources++;
+        Manager.HealhSystem.Heal(HealAmmount);
 
         Destroy(this.gameObject);
 
     }
 
-
     // Start is called before the first frame update
     void Start()
     {
         Manager = FindObjectOfType<ShellStackGameManager>();
-        Destroy(gameObject, 10f);
     }
 
     // Update is called once per frame
     void Update()
     {
         CollectableTimer += Time.deltaTime;
-       
+
         /*Quaternion targetRotation = Quaternion.Euler(0f, CollectableTimer *Mathf.Rad2Deg,0f);
         gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, targetRotation, SpeedRotation * Time.deltaTime);
         */
 
         float THue = CollectableTimer % 1f;
 
-        gameObject.GetComponent<SpriteRenderer>().color =  Color.Lerp(gameObject.GetComponent<SpriteRenderer>().color, Color.HSVToRGB(THue, 1,1), SpeedRotation * Time.deltaTime);
+        gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(gameObject.GetComponent<SpriteRenderer>().color, Color.HSVToRGB(THue, 1, 1), SpeedRotation * Time.deltaTime);
 
     }
 
@@ -49,6 +48,5 @@ public class ResourceCollectable : Collectable
 
 
     }
-
 
 }

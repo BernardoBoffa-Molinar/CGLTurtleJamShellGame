@@ -12,6 +12,8 @@ public class PlayersStackController : MonoBehaviour
     [SerializeField]
     public Vector2 TurtleMovement;
     public float TurtleMovementSpeed = 10;
+    public float TurtleMovementBaseSpeed = 20;
+    public float TurtleMovementDrag = 15;
     public float TurtleDamage = 10;
 
     //CRAB MECHANICS
@@ -61,6 +63,31 @@ public class PlayersStackController : MonoBehaviour
     {
         //Change Input System Later Maybe
         TurtleMovement = new Vector2( -1f*Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            if(TurtleMovementSpeed == TurtleMovementBaseSpeed)
+            {
+                TurtleMovementSpeed = TurtleMovementBaseSpeed *2;
+            }
+            else
+            {
+                TurtleMovementSpeed -= Time.deltaTime * TurtleMovementDrag;
+                if(TurtleMovementSpeed < 20)
+                {
+                    TurtleMovementSpeed = TurtleMovementBaseSpeed;
+                }
+            }
+            
+        }
+        else
+        {
+            TurtleMovementSpeed = TurtleMovementBaseSpeed;
+        }
+
+
+
 
         if(TurtleMovement.magnitude > 0.1f)
         {
@@ -115,7 +142,7 @@ public class PlayersStackController : MonoBehaviour
         //Debug.Log(direction);
         ChickenAimDirection = new Vector2(direction.x,direction.y);
 
-        float targetAngle = Mathf.Atan2(ChickenAimDirection.y, ChickenAimDirection.x) * Mathf.Rad2Deg - 45f;
+        float targetAngle = Mathf.Atan2(ChickenAimDirection.y, ChickenAimDirection.x) * Mathf.Rad2Deg -90f;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
         ChickenBody.transform.rotation = Quaternion.Lerp(ChickenBody.transform.rotation, targetRotation, ChickenThrowSpeed * Time.deltaTime);
 

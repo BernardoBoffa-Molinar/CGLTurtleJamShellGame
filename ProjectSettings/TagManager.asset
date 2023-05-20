@@ -8,6 +8,7 @@ TagManager:
   - CrabArms
   - EggProjectile
   - TurtleBody
+  - CrabAttackArea
   layers:
   - Default
   - TransparentFX

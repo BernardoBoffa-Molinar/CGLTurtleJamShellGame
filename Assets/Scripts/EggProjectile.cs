@@ -23,20 +23,17 @@ public class EggProjectile : MonoBehaviour
         EggDamage = damageToSet;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!other.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("Enemy"))
         {
 
 
 
 
-            Destroy(this.gameObject);
+            Destroy(gameObject,0.1f);
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-      
-    }
+ 
 }

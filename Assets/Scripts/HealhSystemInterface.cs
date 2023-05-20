@@ -12,7 +12,7 @@ public class HealhSystemInterface : MonoBehaviour
     public bool TookDamage = false;
 
     public int maxHealth = 100;
-    public int currentHealth;
+    public int currentHealth = 100;
     public PlayersStackController PlayerController;
     public ShellStackGameManager GameController;
     public SpriteRenderer SP;
@@ -21,15 +21,17 @@ public class HealhSystemInterface : MonoBehaviour
 
     private void Start()
     {
-        currentHealth = maxHealth;
+        
         if (IsPlayer)
         {
+            currentHealth = maxHealth;
             PlayerController = GetComponent<PlayersStackController>();
             GameController = FindObjectOfType<ShellStackGameManager>();
             
         }
         else
         {
+            currentHealth = maxHealth;
             GameController = FindObjectOfType<ShellStackGameManager>();
             PlayerController = FindObjectOfType<PlayersStackController>();
             SP = GetComponent<SpriteRenderer>();
@@ -40,33 +42,40 @@ public class HealhSystemInterface : MonoBehaviour
     {
         if (IsPlayer)
         {
-            if (TookDamage)
+            if (currentHealth > 0)
             {
-                ImmuneframeTimer += Time.deltaTime;
-
-                if (SP)
+                if (TookDamage)
                 {
-                    if (SP.color == Color.black)
-                    {
-                        SP.color = Color.red;
-                    }
-                    else if (SP.color == Color.red)
-                    {
-                        SP.color = Color.black;
-                    }
-                }
+                    ImmuneframeTimer += Time.deltaTime;
 
-
-
-                if (ImmuneframeTimer >= ImmuneframeDuration)
-                {
-                    TookDamage = false;
-                    ImmuneframeTimer = 0f;
                     if (SP)
                     {
-                        SP.color = Color.white;
+                        if (SP.color == Color.black)
+                        {
+                            SP.color = Color.red;
+                        }
+                        else if (SP.color == Color.red)
+                        {
+                            SP.color = Color.black;
+                        }
                     }
+
+
+
+                    if (ImmuneframeTimer >= ImmuneframeDuration)
+                    {
+                        TookDamage = false;
+                        ImmuneframeTimer = 0f;
+                        if (SP)
+                        {
+                            SP.color = Color.white;
+                        }
+                    }
+
                 }
+            }
+            else
+            {
 
             }
         }
@@ -79,6 +88,9 @@ public class HealhSystemInterface : MonoBehaviour
 
                 Vector2 MovementDirection = new Vector2(MoveToPlayer.x, MoveToPlayer.y);
                 MovementDirection.Normalize();
+
+              
+
 
                 if (TookDamage)
                 {
@@ -103,12 +115,17 @@ public class HealhSystemInterface : MonoBehaviour
 
 
                 targetAngle = Mathf.Atan2(MovementDirection.y, MovementDirection.x) * Mathf.Rad2Deg;
-                Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
+                Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle- 90);
+        
+
                 gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, targetRotation, EnemySpeed * Time.deltaTime);
 
                 if (!GameController.IsPaused)
                 {
+                    SP.flipX = MovementDirection.x < 0 ? true : false;
                     GetComponent<Rigidbody2D>().velocity = MovementDirection * EnemySpeed;
+
+                   
                 }
                 else
                 {
@@ -181,7 +198,7 @@ public class HealhSystemInterface : MonoBehaviour
 
         if (!IsPlayer)
         {
-            GameController.SnailsCount++;
+            GameController.SnailsCount += Random.Range(1,5);
             Destroy(gameObject);
         }
         else
@@ -245,7 +262,7 @@ public class HealhSystemInterface : MonoBehaviour
                     ImmuneframeDuration = 0.25f;
                 }
             }
-            else if (playerweapon.gameObject.CompareTag("CrabArms")){
+            else if (playerweapon.gameObject.CompareTag("CrabAttackArea")){
                 TakeDamage(PlayerController.CrabDamage);
                 TookDamage = true;
                 gameObject.GetComponent<SpriteRenderer>().color = Color.black;
