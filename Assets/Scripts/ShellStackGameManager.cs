@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class ShellStackGameManager : MonoBehaviour
 {
+    public int StageResources = 0;
+    public int SnailsCount = 0;
     private static ShellStackGameManager instance;
     public float GameTimer = 600f;
     public bool IsPaused;
@@ -11,6 +14,14 @@ public class ShellStackGameManager : MonoBehaviour
     public bool PlayerIsDeath;
     public PlayersStackController PlayerController;
     public HealhSystemInterface HealhSystem;
+
+
+    //UI Objects
+    public TMP_Text timerText;
+    public TMP_Text SnaillScoreText;
+    public TMP_Text StageResourcesScoreText;
+    public TMP_Text HPText;
+
 
     private void Awake()
     {
@@ -28,7 +39,13 @@ public class ShellStackGameManager : MonoBehaviour
         }
     }
 
-
+    private void UpdateTimerText()
+    {
+        timerText.text = "Timer: " + GameTimer.ToString("F2");
+        SnaillScoreText.text = SnailsCount.ToString();
+        StageResourcesScoreText.text = StageResources.ToString("F0");
+        HPText.text = "HP: " + HealhSystem.currentHealth + " / " + HealhSystem.maxHealth;
+    }
 
     // Example method
     public void StartGame()
@@ -36,6 +53,7 @@ public class ShellStackGameManager : MonoBehaviour
         // Logic for starting the game
         // ...
 
+        ShellGameOver = false;
         PlayerController = GetComponent<PlayersStackController>();
         HealhSystem = GetComponent<HealhSystemInterface>();
         if (PlayerController == null)
@@ -59,7 +77,6 @@ public class ShellStackGameManager : MonoBehaviour
     {
         StartGame();
 
-
     }
 
     // Update is called once per frame
@@ -75,23 +92,25 @@ public class ShellStackGameManager : MonoBehaviour
                 ShellGameOver = true;
             }
 
+            UpdateTimerText();
 
-            if (Input.GetAxis("Escape") > 0f)
-            {
-                IsPaused = true;
-            }
+
+            
         }
 
 
-        if (IsPaused)
+        
+
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-
+            TogglePause();
         }
+        
 
 
         if (ShellGameOver)
         {
-
+           
         }
         
     }
@@ -101,6 +120,25 @@ public class ShellStackGameManager : MonoBehaviour
         get { return instance; }
     }
 
+    private void TogglePause()
+    {
+     
+
+        if (IsPaused)
+        {
+            IsPaused = !IsPaused;
+            // Pause the game
+         //   Time.timeScale = 0f;
+            Debug.Log("Game paused");
+        }
+        else
+        {
+            IsPaused = !IsPaused;
+            // Resume the game
+           // Time.timeScale = 1f;
+            Debug.Log("Game resumed");
+        }
+    }
 
 
 }

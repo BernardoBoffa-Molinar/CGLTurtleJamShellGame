@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class PlayersStackController : MonoBehaviour
 {
+
+    public ShellStackGameManager GameManager;
+
     //TURTLE MECHANICS
     public GameObject TurtleBody;
     [SerializeField]
@@ -33,15 +36,23 @@ public class PlayersStackController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        GameManager = GetComponent<ShellStackGameManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        TurtleControll(Time.deltaTime);
-        CrabControll(Time.deltaTime);
-        ChickenControll(Time.deltaTime);
+        if (!GameManager.IsPaused)
+        {
+            TurtleControll(Time.deltaTime);
+            CrabControll(Time.deltaTime);
+            ChickenControll(Time.deltaTime);
+        }
+        else
+        {
+            gameObject.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+        }
+      
     }
 
 
@@ -53,7 +64,8 @@ public class PlayersStackController : MonoBehaviour
 
         if(TurtleMovement.magnitude > 0.1f)
         {
-            gameObject.GetComponent<Rigidbody>().velocity = new Vector3(TurtleMovement.x, TurtleMovement.y,0)  * TurtleMovementSpeed;
+            gameObject.GetComponent<Rigidbody2D>().velocity = TurtleMovement * TurtleMovementSpeed;
+
             float targetAngle = Mathf.Atan2(TurtleMovement.y, TurtleMovement.x) * Mathf.Rad2Deg - 90f;
             Quaternion targetRotation = Quaternion.Euler(0f,0f, targetAngle);
             TurtleBody.transform.rotation = Quaternion.Lerp(TurtleBody.transform.rotation, targetRotation, TurtleMovementSpeed * Time.deltaTime);
@@ -61,7 +73,7 @@ public class PlayersStackController : MonoBehaviour
         }
         else
         {
-            gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            gameObject.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
         }
 
 
@@ -132,7 +144,7 @@ public class PlayersStackController : MonoBehaviour
         Vector3 SpawnEggPosition = ChickenBody.transform.position + new Vector3( ChickenAimDirection.x,ChickenAimDirection.y,0f)* 0.25f;
 
         GameObject EggProjectile = Instantiate(ChickenEggProjectile, SpawnEggPosition, Quaternion.identity);
-        EggProjectile.GetComponent<Rigidbody2D>().velocity =  ChickenAimDirection * ChickenThrowSpeed;
+        EggProjectile.GetComponent<Rigidbody2D>().velocity =  -1 * ChickenAimDirection * ChickenThrowSpeed;
         EggProjectile.GetComponent<EggProjectile>().SetDamage(ChickenDamage);
     }
 
