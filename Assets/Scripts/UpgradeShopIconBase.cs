@@ -4,36 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public enum PlayerCharacters
-{
-    Turtle,
-    Crab,
-    Bird
-}
-
-
-public enum TurtleUpgrades
-{
-    Health, Speed, Damage
-}
-
-public enum CrabUpgrades
-{
-    AreaScale, RotationSpeed, Damage
-}
-
-public enum BirdUpgrades
-{
-    AttackSpeed, ThrowSpeed, Damage
-}
-
 
 
 public class UpgradeShopIconBase : MonoBehaviour
 {
    // public string Description;
-    public int UpgradeFunctionIndex;
-    public int CharacterIndex;
+    public int UpgradeFunctionIndex =1;
+    public int CharacterIndex =1;
     public Image UpgradeIconImage;
     public Image BackgroundImage;
     public TMP_Text DescriptionText;
@@ -41,9 +18,9 @@ public class UpgradeShopIconBase : MonoBehaviour
 
     public ShellStackGameManager GameManager;
 
-    public int Maxcost = 50;
-    public int Mincost = 20;
-    public int ActualCost;
+    public int Maxcost = 30;
+    public int Mincost = 10;
+    public int ActualCost =0;
 
     // Start is called before the first frame update
     void Start()
@@ -64,6 +41,7 @@ public class UpgradeShopIconBase : MonoBehaviour
     {
         //Debug.Log("Description: " + text);
         gameObject.SetActive(true);
+        
         UpgradeIconImage.sprite = icon;
   
         CharacterIndex = Animal;
@@ -88,14 +66,15 @@ public class UpgradeShopIconBase : MonoBehaviour
 
     }
 
+
     public void OnBuyClick()
     {
        if(GameManager.SnailsCount >= ActualCost)
-        {
+       {
             GameManager.SnailsCount -= ActualCost;
             GameManager.PowerUp(CharacterIndex, UpgradeFunctionIndex);
             gameObject.SetActive(false);
-        }
+       }
 
     }
 }

@@ -115,7 +115,7 @@ public class PlayersStackController : MonoBehaviour
 
         //Change Input System Later Maybe
         CrabAttackDirection = new Vector2(Input.GetAxis("Debug Vertical"), Input.GetAxis("Debug Horizontal"));
-        Debug.Log(CrabAttackDirection);
+        //Debug.Log(CrabAttackDirection);
 
         if (CrabAttackDirection.magnitude > 0.1f)
         {

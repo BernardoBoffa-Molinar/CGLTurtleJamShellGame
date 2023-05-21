@@ -9,19 +9,17 @@ public class ShopManager : MonoBehaviour
 
     private static ShopManager instance;
     public GameObject PlayerGO;
-    public bool PlayerIsInRange;
-    public bool StoreOpen;
+    public bool PlayerIsInRange = false;
+    public bool StoreOpen =false;
     public ShellStackGameManager GameManager;
     public GameObject ShopBackground;
     public List<Sprite> CharacterImages;
     
     public GameObject[] BuyOptionsArray;
-    public UpgradeShopIconBase BuyOption1;
-    public UpgradeShopIconBase BuyOption2;
-    public UpgradeShopIconBase BuyOption3;
 
+    public float distance = 0;
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
 
 
@@ -36,6 +34,8 @@ public class ShopManager : MonoBehaviour
             GameObject[] Temp = GameObject.FindGameObjectsWithTag("UIShopIcon");
             Debug.Log("Temp" + Temp.Length);
             BuyOptionsArray = Temp;
+            PlayerIsInRange = false;
+            StoreOpen = false;
             Debug.Log("options " + BuyOptionsArray.Length);
 
 
@@ -62,8 +62,10 @@ public class ShopManager : MonoBehaviour
 
         if (!GameManager.ShellGameOver)
         {
-            ShopBackground.SetActive(PlayerIsInRange);
-            if (Input.GetKeyDown(KeyCode.Space) && PlayerIsInRange)
+            distance = Vector3.Distance(GameManager.transform.position, gameObject.transform.position); 
+
+            ShopBackground.SetActive(distance < 10);
+            if (Input.GetKeyDown(KeyCode.Space) && distance< 10)
             {
 
 
@@ -96,7 +98,7 @@ public class ShopManager : MonoBehaviour
 
     public void CreateNewShop()
     {
-        Debug.Log("Total:"+BuyOptionsArray.Length);
+        //Debug.Log("Total:"+BuyOptionsArray.Length);
 
         for(int i = 0; i< BuyOptionsArray.Length; i++)
         {
@@ -107,9 +109,10 @@ public class ShopManager : MonoBehaviour
             //Debug.Log("Description: " + Des);
             Sprite img = GetImgByAnimal(AnimalToSet);
 
-            Debug.Log(img.name);
-            
-            BuyOptionsArray[i].GetComponent<UpgradeShopIconBase>().SetUpIcon(img, AnimalToSet, UpgradeToSet, GetDefinitionFromUpgradeIndexs(AnimalToSet, UpgradeToSet));
+            //Debug.Log(img.name);
+
+            UpgradeShopIconBase temp = BuyOptionsArray[i].GetComponent<UpgradeShopIconBase>();
+            temp.SetUpIcon(img, AnimalToSet, UpgradeToSet, GetDefinitionFromUpgradeIndexs(AnimalToSet, UpgradeToSet));
         }
 
        GameManager.UpdateTopUi();
@@ -216,15 +219,9 @@ public class ShopManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<PlayersStackController>() || collision.gameObject.GetComponent<ShellStackGameManager>())
+        if (collision.gameObject == PlayerGO)
         {
-            if (PlayerGO == null)
-            {
-                PlayerGO = collision.gameObject;
-            }
             PlayerIsInRange = true;
-
-
         }
 
     }

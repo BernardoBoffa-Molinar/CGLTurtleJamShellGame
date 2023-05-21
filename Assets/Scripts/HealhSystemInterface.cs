@@ -274,6 +274,7 @@ public class HealhSystemInterface : MonoBehaviour
                 {
                     TakeDamage(otherCollider2D.gameObject.GetComponent<EggProjectile>().EggDamage);
                     TookDamage = true;
+                    GameController.PlaySoundInManager("EggCrack");
                     gameObject.GetComponent<SpriteRenderer>().color = Color.black;
                     ImmuneframeDuration = 0.25f;
                 }

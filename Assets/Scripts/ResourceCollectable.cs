@@ -11,7 +11,7 @@ public class ResourceCollectable : Collectable
     public override void Collect(GameObject CollidingObject)
     {
         Manager.StageResources++;
-
+        Manager.PlaySoundInManager("Collectable");
         Destroy(this.gameObject);
 
     }

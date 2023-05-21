@@ -195,6 +195,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1741057722, guid: 95074c868ea1f654bbd7385cee53f38f, type: 3}
+      propertyPath: m_SortingOrder
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 7093238241443359220, guid: 95074c868ea1f654bbd7385cee53f38f, type: 3}
       propertyPath: m_RootOrder
       value: 11
@@ -280,7 +284,7 @@ GameObject:
   - component: {fileID: 532326896}
   m_Layer: 0
   m_Name: GroundOBj
-  m_TagString: Untagged
+  m_TagString: LevelGround
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -293,8 +297,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 532326895}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -195}
+  m_LocalScale: {x: 10, y: 10, z: 1}
   m_Children:
   - {fileID: 4395200912859900}
   - {fileID: 2101200648}
@@ -394,11 +398,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f804414e26cbea24c84f9880cd4c412f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1067035738 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7093238241443359223, guid: 95074c868ea1f654bbd7385cee53f38f, type: 3}
-  m_PrefabInstance: {fileID: 138797138}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1503113011
 GameObject:
   m_ObjectHideFlags: 0
@@ -554,7 +553,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2101200644}
   m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalPosition: {x: 0, y: 0, z: -240}
   m_LocalScale: {x: 2211.5713, y: 0.74816805, z: 4056.2039}
   m_Children: []
   m_Father: {fileID: 532326896}
@@ -683,7 +682,7 @@ GameObject:
   - component: {fileID: 65922563286955878}
   m_Layer: 0
   m_Name: Ground
-  m_TagString: LevelGround
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 69
@@ -695,13 +694,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1986290849011582}
-  m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.50000024, y: 0.50000024, z: -0.49999976, w: -0.49999976}
+  m_LocalPosition: {x: 696.0001, y: -0.00010681152, z: -0.14976732}
   m_LocalScale: {x: 300, y: 1, z: 300}
   m_Children: []
   m_Father: {fileID: 532326896}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 270, z: 90}
 --- !u!23 &23575124070782552
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1141,8 +1140,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8106404289730522518, guid: d4fa25649ce4a964e866a2814da95b9c, type: 3}
-      propertyPath: ShopGameObject
+      propertyPath: GroundGO
       value: 
-      objectReference: {fileID: 1067035738}
+      objectReference: {fileID: 532326895}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d4fa25649ce4a964e866a2814da95b9c, type: 3}
