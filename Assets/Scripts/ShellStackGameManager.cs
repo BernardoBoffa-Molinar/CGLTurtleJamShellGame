@@ -81,6 +81,7 @@ public class ShellStackGameManager : MonoBehaviour
     public void GotoMainMenu()
     {
         SceneManager.LoadScene("MainMenu");
+         Destroy(SMScript.gameObject);
         Destroy(gameObject);
     }
 

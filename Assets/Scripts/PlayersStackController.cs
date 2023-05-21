@@ -67,7 +67,7 @@ public class PlayersStackController : MonoBehaviour
         TurtleMovement = new Vector2( -1f*Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
 
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.Joystick1Button4))
         {
             if(TurtleMovementSpeed == TurtleMovementBaseSpeed)
             {
@@ -115,6 +115,7 @@ public class PlayersStackController : MonoBehaviour
 
         //Change Input System Later Maybe
         CrabAttackDirection = new Vector2(Input.GetAxis("Debug Vertical"), Input.GetAxis("Debug Horizontal"));
+        Debug.Log(CrabAttackDirection);
 
         if (CrabAttackDirection.magnitude > 0.1f)
         {
