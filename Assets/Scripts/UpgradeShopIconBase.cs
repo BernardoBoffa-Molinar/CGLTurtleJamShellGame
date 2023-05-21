@@ -31,7 +31,7 @@ public enum BirdUpgrades
 
 public class UpgradeShopIconBase : MonoBehaviour
 {
-    public string Description;
+   // public string Description;
     public int UpgradeFunctionIndex;
     public int CharacterIndex;
     public Image UpgradeIconImage;
@@ -60,8 +60,9 @@ public class UpgradeShopIconBase : MonoBehaviour
 
 
 
-    public void SetUpIcon(Sprite icon, int Animal, int Power,string Descripiton)
+    public void SetUpIcon(Sprite icon, int Animal, int Power, string text)
     {
+        Debug.Log("Description: " + text);
         gameObject.SetActive(true);
         UpgradeIconImage.sprite = icon;
   
@@ -72,7 +73,7 @@ public class UpgradeShopIconBase : MonoBehaviour
         switch (Power)
         {
             case 1:
-                BackgroundImage.color = Color.yellow;
+                BackgroundImage.color = Color.green;
                 break;
             case 2:
                 BackgroundImage.color = Color.cyan;
@@ -83,7 +84,7 @@ public class UpgradeShopIconBase : MonoBehaviour
         }
 
         CostText.text = ActualCost.ToString();
-        DescriptionText.text = Description;
+        DescriptionText.SetText(text);
 
     }
 

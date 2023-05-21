@@ -1369,7 +1369,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1212466128
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3277,7 +3277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StageResources: 0
-  SnailsCount: 0
+  SnailsCount: 100
   GameTimer: 600
   IsPaused: 0
   ShellGameOver: 0
@@ -3313,9 +3313,9 @@ MonoBehaviour:
   SMScript: {fileID: 0}
   ShopMenu: {fileID: 2056225706}
   ShopGameObject: {fileID: 0}
+  ShopOpen: 0
   ShopTimer: 0
-  ShopDuration: 20
-  ShopCooldown: 40
+  ShopSpawnPosition: {x: 0, y: 0, z: 0}
 --- !u!50 &8106404289730522519
 Rigidbody2D:
   serializedVersion: 4
@@ -3568,7 +3568,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 287}
+  m_AnchoredPosition: {x: -216, y: 287}
   m_SizeDelta: {x: 800, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8674553206743669675
@@ -3599,9 +3599,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Armadillo Seashore Shop
-
-'
+  m_text: "Armadillo \nSeashore Shop\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7276d5a194c7e06478fae273d69fa7be, type: 2}
   m_sharedMaterial: {fileID: -5576606896989451907, guid: 7276d5a194c7e06478fae273d69fa7be, type: 2}
@@ -3635,7 +3633,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 1
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -4134,8 +4132,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -358, y: 307}
-  m_SizeDelta: {x: 700, y: 600}
+  m_AnchoredPosition: {x: -534, y: 373}
+  m_SizeDelta: {x: 1069.94, y: 756.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1530293963752612411
 CanvasRenderer:
@@ -4158,14 +4156,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.0047169924, g: 0.6743069, b: 1, a: 0.39607844}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 791c0461365912e42aeede986cb00a71, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4882,6 +4880,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2902356576506572734, guid: 0265e7e78ac72394aa7cd4528cc1b4d4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 876c28deb818de74b9977f8ae3fd3b71, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0265e7e78ac72394aa7cd4528cc1b4d4, type: 3}
 --- !u!224 &770188027 stripped

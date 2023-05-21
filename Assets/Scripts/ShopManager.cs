@@ -30,34 +30,38 @@ public class ShopManager : MonoBehaviour
       
         GameManager = FindObjectOfType<ShellStackGameManager>();
         CreateNewShop();
-        CreateNewShop();
-        CreateNewShop();
+      
     }
 
     // Update is called once per frame
     void Update()
     {
-        ShopBackground.SetActive(PlayerIsInRange);
-
-
-        if (Input.GetKey(KeyCode.Space) ){
-
-            if (!GameManager.IsPaused && !StoreOpen)
+      
+        if (!GameManager.ShellGameOver)
+        {
+            ShopBackground.SetActive(PlayerIsInRange);
+            if (Input.GetKeyDown(KeyCode.Space))
             {
 
-                //GameManager.TogglePause();
-                StoreOpen = true;
-                GameManager.ShopOpen = StoreOpen;
-                GameManager.ShopMenu.SetActive(StoreOpen);
-            }
-            else
-            {
-                //GameManager.TogglePause();
-                StoreOpen = false;
-                GameManager.ShopOpen = StoreOpen;
-                GameManager.ShopMenu.SetActive(StoreOpen);
+
+                if (!GameManager.IsPaused && !StoreOpen)
+                {
+
+                    //GameManager.TogglePause();
+                    StoreOpen = true;
+                    GameManager.ShopOpen = StoreOpen;
+                    GameManager.ShopMenu.SetActive(StoreOpen);
+                }
+                else
+                {
+                    //GameManager.TogglePause();
+                    StoreOpen = false;
+                    GameManager.ShopOpen = StoreOpen;
+                    GameManager.ShopMenu.SetActive(StoreOpen);
+                }
             }
         }
+       
 
 
 
@@ -68,6 +72,8 @@ public class ShopManager : MonoBehaviour
 
     public void CreateNewShop()
     {
+        Debug.Log("Total:"+BuyOptionsArray.Length);
+
         for(int i = 0; i< BuyOptionsArray.Length; i++)
         {
             int AnimalToSet = Random.Range(1, 4);
@@ -79,7 +85,7 @@ public class ShopManager : MonoBehaviour
 
             Debug.Log(img.name);
             
-            BuyOptionsArray[i].GetComponent<UpgradeShopIconBase>().SetUpIcon(img, AnimalToSet, UpgradeToSet, Des);
+            BuyOptionsArray[i].GetComponent<UpgradeShopIconBase>().SetUpIcon(img, AnimalToSet, UpgradeToSet, GetDefinitionFromUpgradeIndexs(AnimalToSet, UpgradeToSet));
         }
 
     }
@@ -89,11 +95,18 @@ public class ShopManager : MonoBehaviour
         return CharacterImages[Animal - 1];
     }
 
+    public void RerollShopClick()
+    {
+        
+    }
+
 
     public string GetDefinitionFromUpgradeIndexs(int AnimalID, int UpgradeId)
     {
         string Description ="";
-       
+        string Extra ="";
+        int temp = 0;
+        float Ftemp = 0;
 
         switch (AnimalID)
         {
@@ -102,16 +115,21 @@ public class ShopManager : MonoBehaviour
                 switch (UpgradeId)
                 {
                     case 1:
-
-                        Description = "More Health";
+                        temp = PlayerGO.GetComponent<HealhSystemInterface>().maxHealth;
+                        Extra =temp+" => "+(temp+10);
+                        Description = "More Health\n" +Extra;
                        
                         break;
                     case 2:
-                        Description = "More Speed";
-                       
+                        Ftemp = PlayerGO.GetComponent<PlayersStackController>().TurtleMovementBaseSpeed;
+                        Extra = Ftemp + " => " + (Ftemp + 5.0f);
+                        Description = "More Speed\n" + Extra;
+
                         break;
                     case 3:
-                        Description = "More Damage";
+                        Ftemp = PlayerGO.GetComponent<PlayersStackController>().TurtleDamage;
+                        Extra = Ftemp.ToString("F0") + " => " + (Ftemp + 5.0f).ToString("F0");
+                        Description = "More Damage\n" + Extra;
                         break;
                 }
                 break;
@@ -120,15 +138,19 @@ public class ShopManager : MonoBehaviour
                 switch (UpgradeId)
                 {
                     case 1:
-                        Description = "More AOE";
-                       
+                        Ftemp = PlayerGO.GetComponent<PlayersStackController>().CrabArea;
+                        Extra = Ftemp.ToString("F1") + "x => " + (Ftemp + 0.25f).ToString("F1")+"x";
+                        Description = "More AOE\n"+Extra;
                         break;
                     case 2:
-                        Description = "More Speed";
-                       
+                        Ftemp = PlayerGO.GetComponent<PlayersStackController>().CrabRotationSpeed;
+                        Extra = Ftemp.ToString("F0") + " => " + (Ftemp + 5.0f).ToString("F0");
+                        Description = "More Speed\n" + Extra;
                         break;
                     case 3:
-                        Description = "More Damage";
+                        Ftemp = PlayerGO.GetComponent<PlayersStackController>().CrabDamage;
+                        Extra = Ftemp.ToString("F0") + " => " + (Ftemp + 5.0f).ToString("F0");
+                        Description = "More Damage\n" + Extra;
                         break;
                 }
 
@@ -138,15 +160,21 @@ public class ShopManager : MonoBehaviour
                 switch (UpgradeId)
                 {
                     case 1:
-                        Description = "More Fire Rate";
-                        
+                        Ftemp = PlayerGO.GetComponent<PlayersStackController>().shootCooldown;
+                        Extra = Ftemp.ToString("F1") + "s => " + (Ftemp * 0.9f).ToString("F1") +"s";
+                        Description = "More Fire Rate\n" + Extra;
+
                         break;
                     case 2:
-                        Description = "More Egg Speed";
+                        Ftemp = PlayerGO.GetComponent<PlayersStackController>().BirdThrowSpeed;
+                        Extra = Ftemp.ToString("F0") + " => " + (Ftemp + 5.0f).ToString("F0");
+                        Description = "More Egg Speed\n" + Extra;
                    
                         break;
                     case 3:
-                        Description = "More Egg Damage";
+                        Ftemp = PlayerGO.GetComponent<PlayersStackController>().BirdDamage;
+                        Extra = Ftemp.ToString("F0") + " => " + (Ftemp + 5.0f).ToString("F0");
+                        Description = "More Egg Damage\n" + Extra;
                         break;
                 }
                 break;
@@ -154,13 +182,6 @@ public class ShopManager : MonoBehaviour
         return Description;
     }
 
-    UpgradeShopIconBase CreateBuyOption()
-    {
-        UpgradeShopIconBase temp = new UpgradeShopIconBase();
-
-
-        return temp;
-    }
 
 
     private void OnTriggerEnter2D(Collider2D collision)

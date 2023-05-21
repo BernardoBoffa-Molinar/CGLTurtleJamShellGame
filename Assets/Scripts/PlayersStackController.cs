@@ -46,7 +46,7 @@ public class PlayersStackController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!GameManager.IsPaused)
+        if (!GameManager.IsPaused && !GameManager.ShopOpen)
         {
             TurtleControll(Time.deltaTime);
             CrabControll(Time.deltaTime);

@@ -40,8 +40,8 @@ public class ShellStackGameManager : MonoBehaviour
     [SerializeField]
     public List<GameObject> CollectablesPrefab;
 
-    public float CollectSpawnMaxDistance = 60f;
-    public float CollectSpawnMinDistance = 30f;
+    public float CollectSpawnMaxDistance = 50f;
+    public float CollectSpawnMinDistance = 25f;
     public float CollectSpawnTimer = 0f;
     public float CollectSpawnColdown = 10f;
     public int CollectableStageIndex = 0;
@@ -53,8 +53,24 @@ public class ShellStackGameManager : MonoBehaviour
     public GameObject ShopGameObject;
     public bool ShopOpen;
     public float ShopTimer = 0f;
-    public float ShopDuration = 20f;
-    public float ShopCooldown = 40f;
+    public float ShopDuration = 30f;
+    public float ShopCooldown = 30f;
+    public Vector3 ShopSpawnPosition;
+
+
+
+    void MoveShopPosition()
+    {
+        ShopTimer = 0f;
+        ShopGameObject.SetActive(true);
+        float ToSpawnDirX = Random.Range(-1.0f, 1.0f);
+        float ToSpawnDirY = Random.Range(-1.0f, 1.0f);
+        float distance = 30f;
+        ShopSpawnPosition = gameObject.transform.position + new Vector3(ToSpawnDirX, ToSpawnDirY, 0).normalized * distance + Vector3.forward;
+        ShopGameObject.transform.position = ShopSpawnPosition;
+        SMScript.CreateNewShop();
+
+    }
 
     void ShopController()
     {
@@ -63,7 +79,6 @@ public class ShellStackGameManager : MonoBehaviour
         if(ShopTimer < ShopDuration)
         {
             ShopGameObject.SetActive(true);
-
         }
         else
         {
@@ -72,14 +87,7 @@ public class ShellStackGameManager : MonoBehaviour
 
             if(ShopTimer > ShopDuration + ShopCooldown)
             {
-                ShopTimer = 0f;
-                ShopGameObject.SetActive(true);
-                float ToSpawnDirX = Random.Range(-1.0f, 1.0f);
-                float ToSpawnDirY = Random.Range(-1.0f, 1.0f);
-                float distance = Random.Range(CollectSpawnMinDistance, CollectSpawnMaxDistance);
-                Vector3 SpawnPosition = gameObject.transform.position + new Vector3(ToSpawnDirX, ToSpawnDirY, 0).normalized * distance + Vector3.forward * 2f;
-                ShopGameObject.transform.position = SpawnPosition;
-                SMScript.CreateNewShop();
+                MoveShopPosition();
             }
 
         }
@@ -202,9 +210,11 @@ public class ShellStackGameManager : MonoBehaviour
     // Example method
     public void EndGame()
     {
-        // Logic for ending the game
+        // Logic for ending the game    
         // ...
         GameOverMenu.SetActive(true);
+        ShopMenu.SetActive(false);
+        PauseMenu.SetActive(false);
     }
 
    
@@ -363,5 +373,7 @@ public class ShellStackGameManager : MonoBehaviour
                 }
                 break;
         }
+
+        UpdateTimerText();
     }
 }
