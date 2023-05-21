@@ -179,7 +179,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9632d1cf21b111a438561492f9fa6286, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CollectableTimer: 0
+  ColorChange: 0
+  CollectableTimer: 0.33
   Manager: {fileID: 0}
   SpeedRotation: 20
 --- !u!58 &7894804935784030642

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ShellStackGameManager : MonoBehaviour
 {
+
     public int StageResources = 0;
-    public int SnailsCount = 0;
+    public int SnailsCount = 100;
     private static ShellStackGameManager instance;
     public float GameTimer = 600f;
     public bool IsPaused;
@@ -24,27 +26,17 @@ public class ShellStackGameManager : MonoBehaviour
     public TMP_Text HPText;
     public Slider HPSlider;
     public GameObject PauseMenu;
-
     public GameObject GameOverMenu;
 
-    public GameObject ShopMenu;
- 
-
     //EnemySpawener Controll
-
     [SerializeField]
     public List<GameObject> EnemiesPrefab;
-
     public float SpawnDistance = 50f;
     public float SpawnTimer =0f;
     public float SpawnColdown = 5f;
     public int EnemiesSpawnAmmount = 2;
 
-
-
-
     //EnemySpawener Controll
-
     [SerializeField]
     public List<GameObject> CollectablesPrefab;
 
@@ -55,25 +47,64 @@ public class ShellStackGameManager : MonoBehaviour
     public int CollectableStageIndex = 0;
     public int CollectablesAmmounts = 3;
 
+    //Shop Objects
+    public ShopManager SMScript;
+    public GameObject ShopMenu;
+    public GameObject ShopGameObject;
+    public bool ShopOpen;
+    public float ShopTimer = 0f;
+    public float ShopDuration = 20f;
+    public float ShopCooldown = 40f;
+
+    void ShopController()
+    {
+
+        ShopTimer += Time.deltaTime;
+        if(ShopTimer < ShopDuration)
+        {
+            ShopGameObject.SetActive(true);
+
+        }
+        else
+        {
+
+            ShopGameObject.SetActive(false);
+
+            if(ShopTimer > ShopDuration + ShopCooldown)
+            {
+                ShopTimer = 0f;
+                ShopGameObject.SetActive(true);
+                float ToSpawnDirX = Random.Range(-1.0f, 1.0f);
+                float ToSpawnDirY = Random.Range(-1.0f, 1.0f);
+                float distance = Random.Range(CollectSpawnMinDistance, CollectSpawnMaxDistance);
+                Vector3 SpawnPosition = gameObject.transform.position + new Vector3(ToSpawnDirX, ToSpawnDirY, 0).normalized * distance + Vector3.forward * 2f;
+                ShopGameObject.transform.position = SpawnPosition;
+                SMScript.CreateNewShop();
+            }
+
+        }
+    }
+
     void SpawnCollectables()
     {
         for (int i = 0; i < CollectablesAmmounts; i++)
         {
             int CollectProbably = Random.Range(0, 100);
             int CollectToSpawn = 0;
-            if (CollectProbably > 75)
+            if (CollectProbably > 90)
             {
                 CollectToSpawn = CollectablesPrefab.Count-1;
             }
             else
             {
+                CollectToSpawn = Random.Range(0, CollectablesPrefab.Count - 1);
 
             }
                      
             float ToSpawnDirX = Random.Range(-1.0f, 1.0f);
             float ToSpawnDirY = Random.Range(-1.0f, 1.0f);
             float distance = Random.Range(CollectSpawnMinDistance, CollectSpawnMaxDistance);
-            Vector3 SpawnPosition = gameObject.transform.position + new Vector3(ToSpawnDirX, ToSpawnDirY, 0).normalized * distance;
+            Vector3 SpawnPosition = gameObject.transform.position + new Vector3(ToSpawnDirX, ToSpawnDirY, 0).normalized * distance + Vector3.forward *2f;
             Instantiate(CollectablesPrefab[CollectToSpawn], SpawnPosition, Quaternion.identity);
 
         }
@@ -91,6 +122,8 @@ public class ShellStackGameManager : MonoBehaviour
 
 
     }
+
+
 
 
     void EnemiesSpawnerLogic()
@@ -157,6 +190,7 @@ public class ShellStackGameManager : MonoBehaviour
         ShellGameOver = false;
         PlayerController = GetComponent<PlayersStackController>();
         HealhSystem = GetComponent<HealhSystemInterface>();
+        SMScript = FindObjectOfType<ShopManager>();
         if (PlayerController == null)
         {
             Debug.LogError("PlayerController component not found!");
@@ -188,7 +222,7 @@ public class ShellStackGameManager : MonoBehaviour
     {
 
         // game in play
-        if (!IsPaused && !ShellGameOver)
+        if (!IsPaused && !ShellGameOver && !ShopOpen)
         {
             GameTimer -= Time.deltaTime;
             if(GameTimer <= 0  || PlayerIsDeath)
@@ -200,12 +234,27 @@ public class ShellStackGameManager : MonoBehaviour
 
             UpdateTimerText();
             CollectablesSpawnnerLogic();
-
+            ShopController();
 
 
         }
 
+        if (IsPaused) {
+            if (ShopOpen)
+            {
+                ShopMenu.SetActive(ShopOpen);
+                PauseMenu.SetActive(false);
+            }
+            else
+            {
+                ShopMenu.SetActive(false);
+                PauseMenu.SetActive(true);
+            }
+        }
 
+    
+ 
+        
         
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -235,7 +284,12 @@ public class ShellStackGameManager : MonoBehaviour
         if (IsPaused)
         {
             IsPaused = !IsPaused;
-            
+
+            if (ShopOpen)
+            {
+                ShopOpen = false;
+                SMScript.StoreOpen = false;
+            }
             // Pause the game
             //   Time.timeScale = 0f;
             Debug.Log("Game paused");
@@ -250,7 +304,10 @@ public class ShellStackGameManager : MonoBehaviour
         PauseMenu.SetActive(IsPaused);
     }
 
-
+    public void LoadSceneByName(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
 
 
     public void PowerUp(int AnimalID, int UpgradeId)
@@ -306,9 +363,5 @@ public class ShellStackGameManager : MonoBehaviour
                 }
                 break;
         }
-
-
-
-
     }
 }

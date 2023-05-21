@@ -7,7 +7,7 @@ public class HealthPickUp : Collectable
     public float CollectableTimer;
     public ShellStackGameManager Manager;
     public float SpeedRotation = 40f;
-    public int HealAmmount = 20;
+    public int HealAmmount = 10;
 
     public override void Collect(GameObject CollidingObject)
     {
@@ -27,19 +27,22 @@ public class HealthPickUp : Collectable
     // Update is called once per frame
     void Update()
     {
-        CollectableTimer += Time.deltaTime;
+        if (!Manager.IsPaused && !Manager.ShopOpen)
+        {
+            CollectableTimer += Time.deltaTime;
 
-        
-        if (ColorChange)
-        {
-            float THue = CollectableTimer % 1f;
-            gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(gameObject.GetComponent<SpriteRenderer>().color, Color.HSVToRGB(THue, 1, 1), SpeedRotation * Time.deltaTime);
-        }
-        else
-        {
-            Quaternion targetRotation = Quaternion.Euler(0f, CollectableTimer *Mathf.Rad2Deg,0f);
-            gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, targetRotation, SpeedRotation * Time.deltaTime);
-        
+
+            if (ColorChange)
+            {
+                float THue = CollectableTimer % 1f;
+                gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(gameObject.GetComponent<SpriteRenderer>().color, Color.HSVToRGB(THue, 1, 1), SpeedRotation * Time.deltaTime);
+            }
+            else
+            {
+                Quaternion targetRotation = Quaternion.Euler(0f, CollectableTimer * Mathf.Rad2Deg, 0f);
+                gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, targetRotation, SpeedRotation * Time.deltaTime);
+
+            }
         }
     }
 

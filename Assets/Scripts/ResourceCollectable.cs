@@ -28,20 +28,30 @@ public class ResourceCollectable : Collectable
     // Update is called once per frame
     void Update()
     {
-        CollectableTimer += Time.deltaTime;
 
-        
+        if (!Manager.IsPaused && !Manager.ShopOpen)
+        {
+            CollectableTimer += Time.deltaTime;
 
-        if (ColorChange)
-        {
-            float THue = CollectableTimer % 1f;
-            gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(gameObject.GetComponent<SpriteRenderer>().color, Color.HSVToRGB(THue, 1, 1), SpeedRotation * Time.deltaTime);
-        }
-        else
-        {
-            /*Quaternion targetRotation = Quaternion.Euler(0f, CollectableTimer *Mathf.Rad2Deg,0f);
-            gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, targetRotation, SpeedRotation * Time.deltaTime);
-            */
+
+
+            if (ColorChange)
+            {
+                float THue = Mathf.Abs(Mathf.Sin(CollectableTimer));
+                gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(gameObject.GetComponent<SpriteRenderer>().color, Color.HSVToRGB(THue, 1, 1), (SpeedRotation / 2) * Time.deltaTime);
+                Quaternion targetRotation = Quaternion.Euler(0f, CollectableTimer * Mathf.Rad2Deg, 0f);
+                gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, targetRotation, SpeedRotation * Time.deltaTime);
+                if (CollectableTimer >= 9f)
+                {
+                    Vector3 scales = Vector3.one * Mathf.Abs(Mathf.Clamp01(10.0f - CollectableTimer)) * 3;
+
+                    gameObject.transform.localScale = scales;
+                }
+            }
+            else
+            {
+
+            }
         }
     }
 

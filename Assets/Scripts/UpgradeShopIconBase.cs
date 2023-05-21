@@ -35,8 +35,9 @@ public class UpgradeShopIconBase : MonoBehaviour
     public int UpgradeFunctionIndex;
     public int CharacterIndex;
     public Image UpgradeIconImage;
+    public Image BackgroundImage;
     public TMP_Text DescriptionText;
-    public TMP_Text NameText;
+    public TMP_Text CostText;
 
     public ShellStackGameManager GameManager;
 
@@ -58,13 +59,41 @@ public class UpgradeShopIconBase : MonoBehaviour
     }
 
 
+
+    public void SetUpIcon(Sprite icon, int Animal, int Power,string Descripiton)
+    {
+        gameObject.SetActive(true);
+        UpgradeIconImage.sprite = icon;
+  
+        CharacterIndex = Animal;
+        UpgradeFunctionIndex = Power;
+        ActualCost = Random.Range(Mincost, Maxcost);
+
+        switch (Power)
+        {
+            case 1:
+                BackgroundImage.color = Color.yellow;
+                break;
+            case 2:
+                BackgroundImage.color = Color.cyan;
+                break;
+            case 3:
+                BackgroundImage.color = Color.magenta;
+                break;
+        }
+
+        CostText.text = ActualCost.ToString();
+        DescriptionText.text = Description;
+
+    }
+
     public void OnBuyClick()
     {
        if(GameManager.SnailsCount >= ActualCost)
         {
             GameManager.SnailsCount -= ActualCost;
             GameManager.PowerUp(CharacterIndex, UpgradeFunctionIndex);
-
+            gameObject.SetActive(false);
         }
 
     }

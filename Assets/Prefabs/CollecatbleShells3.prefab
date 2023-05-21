@@ -180,7 +180,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ColorChange: 0
-  CollectableTimer: 0
+  CollectableTimer: 0.66
   Manager: {fileID: 0}
   SpeedRotation: 20
 --- !u!58 &8794871444578537688

@@ -86,10 +86,6 @@ public class HealhSystemInterface : MonoBehaviour
             if(currentHealth > 0 )
             {
 
-
-   
-
-
                 if (TookDamage)
                 {
                     Vector3 MoveAwayFromPlayer = -1*(PlayerController.gameObject.transform.position - transform.position);
@@ -98,7 +94,7 @@ public class HealhSystemInterface : MonoBehaviour
                     MovementDirection.Normalize();
                     ImmuneframeTimer += Time.deltaTime;
 
-                    GetComponent<Rigidbody2D>().velocity = MovementDirection * EnemySpeed;
+                    GetComponent<Rigidbody2D>().velocity = MovementDirection * EnemySpeed *2;
                     if (gameObject.GetComponent<SpriteRenderer>().color == Color.black)
                     {
                         gameObject.GetComponent<SpriteRenderer>().color = Color.red;
@@ -116,7 +112,6 @@ public class HealhSystemInterface : MonoBehaviour
                     {
                         TookDamage = false;
                         ImmuneframeTimer = 0f;
-                        
                         gameObject.GetComponent<SpriteRenderer>().color = Color.white;
                     }
 
@@ -135,7 +130,7 @@ public class HealhSystemInterface : MonoBehaviour
 
                     gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, targetRotation, EnemySpeed * Time.deltaTime);
 
-                    if (!GameController.IsPaused)
+                    if (!GameController.IsPaused && !GameController.ShopOpen)
                     {
                         SP.flipX = MovementDirection.x < 0 ? true : false;
                         GetComponent<Rigidbody2D>().velocity = MovementDirection * EnemySpeed;
