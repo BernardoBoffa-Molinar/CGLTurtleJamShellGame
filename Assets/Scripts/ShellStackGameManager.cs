@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class ShellStackGameManager : MonoBehaviour
 {
-
+    public float StageDifficulty = 1;
     public int StageResources = 0;
     public int SnailsCount = 100;
     private static ShellStackGameManager instance;
@@ -131,7 +131,14 @@ public class ShellStackGameManager : MonoBehaviour
 
     }
 
-
+    void StageControll()
+    {
+        if (StageResources >= 50)
+        {
+            StageResources = 0;
+            StageDifficulty += 0.25f;
+        }
+    }
 
 
     void EnemiesSpawnerLogic()
@@ -177,7 +184,7 @@ public class ShellStackGameManager : MonoBehaviour
         }
     }
 
-    private void UpdateTimerText()
+    public void UpdateTimerText()
     {
         timerText.text = "Timer: " + GameTimer.ToString("F0");
         SnaillScoreText.text = SnailsCount.ToString();
@@ -280,6 +287,11 @@ public class ShellStackGameManager : MonoBehaviour
         }
 
         
+    }
+
+    public void RerollShopClick()
+    {
+        SMScript.RerollShop();
     }
 
     public static ShellStackGameManager Instance

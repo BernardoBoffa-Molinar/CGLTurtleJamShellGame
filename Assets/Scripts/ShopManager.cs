@@ -88,6 +88,7 @@ public class ShopManager : MonoBehaviour
             BuyOptionsArray[i].GetComponent<UpgradeShopIconBase>().SetUpIcon(img, AnimalToSet, UpgradeToSet, GetDefinitionFromUpgradeIndexs(AnimalToSet, UpgradeToSet));
         }
 
+       GameManager.UpdateTimerText();
     }
 
     Sprite GetImgByAnimal(int Animal)
@@ -95,9 +96,14 @@ public class ShopManager : MonoBehaviour
         return CharacterImages[Animal - 1];
     }
 
-    public void RerollShopClick()
+    public void RerollShop()
     {
-        
+        if(GameManager.SnailsCount - 10 > 0)
+        {
+            GameManager.SnailsCount -= 10;
+            CreateNewShop();
+        }
+       
     }
 
 
@@ -105,7 +111,7 @@ public class ShopManager : MonoBehaviour
     {
         string Description ="";
         string Extra ="";
-        int temp = 0;
+  
         float Ftemp = 0;
 
         switch (AnimalID)
@@ -115,8 +121,8 @@ public class ShopManager : MonoBehaviour
                 switch (UpgradeId)
                 {
                     case 1:
-                        temp = PlayerGO.GetComponent<HealhSystemInterface>().maxHealth;
-                        Extra =temp+" => "+(temp+10);
+                        Ftemp = PlayerGO.GetComponent<HealhSystemInterface>().maxHealth;
+                        Extra = Ftemp + " => "+(Ftemp + 10);
                         Description = "More Health\n" +Extra;
                        
                         break;

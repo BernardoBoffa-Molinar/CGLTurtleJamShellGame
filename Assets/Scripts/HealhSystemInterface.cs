@@ -11,8 +11,8 @@ public class HealhSystemInterface : MonoBehaviour
     public float ImmuneframeDuration = 0.2f;
     public bool TookDamage = false;
 
-    public int maxHealth = 100;
-    public int currentHealth = 100;
+    public float maxHealth ;
+    public float currentHealth;
     public PlayersStackController PlayerController;
     public ShellStackGameManager GameController;
     public SpriteRenderer SP;
@@ -26,17 +26,19 @@ public class HealhSystemInterface : MonoBehaviour
         
         if (IsPlayer)
         {
-            currentHealth = maxHealth;
-            PlayerController = GetComponent<PlayersStackController>();
             GameController = FindObjectOfType<ShellStackGameManager>();
+            PlayerController = GetComponent<PlayersStackController>();
+            currentHealth = maxHealth;
             
         }
         else
         {
-            currentHealth = maxHealth;
             GameController = FindObjectOfType<ShellStackGameManager>();
             PlayerController = FindObjectOfType<PlayersStackController>();
             SP = GetComponent<SpriteRenderer>();
+            maxHealth *= GameController.StageDifficulty;
+            currentHealth = maxHealth;
+           
         }
     }
 
@@ -78,7 +80,7 @@ public class HealhSystemInterface : MonoBehaviour
             }
             else
             {
-
+                Die();
             }
         }
         else
@@ -213,7 +215,8 @@ public class HealhSystemInterface : MonoBehaviour
             GameController.SnailsCount += Random.Range(1,5);
             Destroy(gameObject);
         }
-        else
+        
+        if(IsPlayer)
         {
             GameController.ShellGameOver = true;
         }
