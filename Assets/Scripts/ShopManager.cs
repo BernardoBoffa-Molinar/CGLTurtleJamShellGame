@@ -6,6 +6,8 @@ using TMPro;
 
 public class ShopManager : MonoBehaviour
 {
+
+    private static ShopManager instance;
     public GameObject PlayerGO;
     public bool PlayerIsInRange;
     public bool StoreOpen;
@@ -21,26 +23,47 @@ public class ShopManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        PlayerGO = GameObject.FindGameObjectWithTag("Player");
-        GameObject[] Temp = GameObject.FindGameObjectsWithTag("UIShopIcon");
-        Debug.Log("Temp"+Temp.Length);
-        BuyOptionsArray = Temp;
-        Debug.Log("options "+BuyOptionsArray.Length);
-      
-      
-        GameManager = FindObjectOfType<ShellStackGameManager>();
-        CreateNewShop();
+
+
+
+        // Check if an instance already exists
+        if (instance == null)
+        {
+            // Set the instance to this object
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            PlayerGO = GameObject.FindGameObjectWithTag("Player");
+            GameObject[] Temp = GameObject.FindGameObjectsWithTag("UIShopIcon");
+            Debug.Log("Temp" + Temp.Length);
+            BuyOptionsArray = Temp;
+            Debug.Log("options " + BuyOptionsArray.Length);
+
+
+            GameManager = FindObjectOfType<ShellStackGameManager>();
+            CreateNewShop();
+        }
+        else
+        {
+            // Destroy this object if another instance exists
+            Destroy(gameObject);
+        }
+
+        
       
     }
 
     // Update is called once per frame
     void Update()
     {
-      
+      if(GameManager == null)
+        {
+            GameManager = FindObjectOfType<ShellStackGameManager>();
+        }
+
         if (!GameManager.ShellGameOver)
         {
             ShopBackground.SetActive(PlayerIsInRange);
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && PlayerIsInRange)
             {
 
 
@@ -49,6 +72,7 @@ public class ShopManager : MonoBehaviour
 
                     //GameManager.TogglePause();
                     StoreOpen = true;
+                    GameManager.PlaySoundInManager("ShopSFX");
                     GameManager.ShopOpen = StoreOpen;
                     GameManager.ShopMenu.SetActive(StoreOpen);
                 }
@@ -78,9 +102,9 @@ public class ShopManager : MonoBehaviour
         {
             int AnimalToSet = Random.Range(1, 4);
             int UpgradeToSet = Random.Range(1, 4);
-            Debug.Log("Animal :" + AnimalToSet + " Power:" + UpgradeToSet);
+            //Debug.Log("Animal :" + AnimalToSet + " Power:" + UpgradeToSet);
             string Des = GetDefinitionFromUpgradeIndexs(AnimalToSet, UpgradeToSet);
-            Debug.Log("Description: " + Des);
+            //Debug.Log("Description: " + Des);
             Sprite img = GetImgByAnimal(AnimalToSet);
 
             Debug.Log(img.name);
@@ -88,7 +112,7 @@ public class ShopManager : MonoBehaviour
             BuyOptionsArray[i].GetComponent<UpgradeShopIconBase>().SetUpIcon(img, AnimalToSet, UpgradeToSet, GetDefinitionFromUpgradeIndexs(AnimalToSet, UpgradeToSet));
         }
 
-       GameManager.UpdateTimerText();
+       GameManager.UpdateTopUi();
     }
 
     Sprite GetImgByAnimal(int Animal)

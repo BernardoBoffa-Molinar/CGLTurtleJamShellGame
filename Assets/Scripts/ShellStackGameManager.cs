@@ -7,7 +7,10 @@ using UnityEngine.SceneManagement;
 
 public class ShellStackGameManager : MonoBehaviour
 {
+    public GameObject GroundGO;
+    public Material[] GroundMaterials;
     public float StageDifficulty = 1;
+    public int StageLevel =1;
     public int StageResources = 0;
     public int SnailsCount = 100;
     private static ShellStackGameManager instance;
@@ -18,15 +21,23 @@ public class ShellStackGameManager : MonoBehaviour
     public PlayersStackController PlayerController;
     public HealhSystemInterface HealhSystem;
 
+    public AudioManager AudioManager;
+
 
     //UI Objects
     public TMP_Text timerText;
+    public TMP_Text levelText;
+
     public TMP_Text SnaillScoreText;
     public TMP_Text StageResourcesScoreText;
     public TMP_Text HPText;
     public Slider HPSlider;
     public GameObject PauseMenu;
+
+    //Gameover 
     public GameObject GameOverMenu;
+    bool Winner = false;
+    public TMP_Text GameOverMessage;
 
     //EnemySpawener Controll
     [SerializeField]
@@ -59,6 +70,20 @@ public class ShellStackGameManager : MonoBehaviour
 
 
 
+    public void ReloadGame()
+    {
+        
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Destroy(SMScript.gameObject);
+        Destroy(gameObject);
+    }
+
+    public void GotoMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+        Destroy(gameObject);
+    }
+
     void MoveShopPosition()
     {
         ShopTimer = 0f;
@@ -74,6 +99,8 @@ public class ShellStackGameManager : MonoBehaviour
 
     void ShopController()
     {
+
+      
 
         ShopTimer += Time.deltaTime;
         if(ShopTimer < ShopDuration)
@@ -130,16 +157,52 @@ public class ShellStackGameManager : MonoBehaviour
 
 
     }
-
+    
+    
+    
     void StageControll()
     {
         if (StageResources >= 50)
         {
+            StageLevel++;
             StageResources = 0;
+            if (GroundGO)
+            {
+                GroundGO.transform.position = gameObject.transform.position + Vector3.back;
+                GroundGO.GetComponent<Renderer>().material = GroundMaterials[StageLevel - 1];
+
+            }
+            else
+            {
+                GroundGO =  GameObject.FindGameObjectWithTag("LevelGround");
+               GroundGO.transform.position = gameObject.transform.position + Vector3.back;
+                GroundGO.GetComponent<Renderer>().material = GroundMaterials[StageLevel - 1];
+
+            }
             StageDifficulty += 0.25f;
+            if(StageLevel ==GroundMaterials.Length +1)
+            {
+                Winner = true;
+                WinGame();
+            }
         }
     }
 
+    public void WinGame()
+    {
+        UpdateTopUi();
+        ShellGameOver = true;
+
+        if (Winner)
+        {
+            GameOverMessage.text = "You Win :)";
+        }
+        else
+        {
+            GameOverMessage.text = "You Lose, Try Again :)";
+        }
+
+    }
 
     void EnemiesSpawnerLogic()
     {
@@ -184,11 +247,13 @@ public class ShellStackGameManager : MonoBehaviour
         }
     }
 
-    public void UpdateTimerText()
+    public void UpdateTopUi()
     {
         timerText.text = "Timer: " + GameTimer.ToString("F0");
+        levelText.text = "Level " + StageLevel.ToString();
+
         SnaillScoreText.text = SnailsCount.ToString();
-        StageResourcesScoreText.text = StageResources.ToString("F0");
+        StageResourcesScoreText.text = StageResources.ToString("F0") + "/50";
         HPText.text = "HP: " + HealhSystem.currentHealth + " / " + HealhSystem.maxHealth;
         HPSlider.value =  (float)HealhSystem.currentHealth / (float)HealhSystem.maxHealth;
     }
@@ -203,9 +268,23 @@ public class ShellStackGameManager : MonoBehaviour
         PauseMenu.SetActive( false);
         HPSlider.value = HealhSystem.currentHealth / HealhSystem.maxHealth;
         ShellGameOver = false;
+        GroundGO = GameObject.FindGameObjectWithTag("LevelGround");
+        gameObject.transform.position = Vector3.zero + Vector3.forward;
+        StageDifficulty = 1f;
+        SnailsCount = 0;
+       // StageResources = 0;
+        IsPaused = false;
+        ShopOpen = false;
+        AudioManager = FindObjectOfType<AudioManager>();
+        PlaySoundInManager("MainMusic");
+        PlaySoundInManager("WavesSFX");
+
+
+        levelText.text = "Level " + 1 + (StageDifficulty-1)/0.25f;
         PlayerController = GetComponent<PlayersStackController>();
         HealhSystem = GetComponent<HealhSystemInterface>();
         SMScript = FindObjectOfType<ShopManager>();
+        ShopGameObject = SMScript.gameObject;
         if (PlayerController == null)
         {
             Debug.LogError("PlayerController component not found!");
@@ -226,6 +305,15 @@ public class ShellStackGameManager : MonoBehaviour
 
    
 
+    public void PlaySoundInManager(string Sname)
+    {
+        if (AudioManager)
+        {
+            AudioManager.PlaySound(Sname);
+        }
+       
+    }
+
 
 // Start is called before the first frame update
     void Start()
@@ -245,15 +333,16 @@ public class ShellStackGameManager : MonoBehaviour
             if(GameTimer <= 0  || PlayerIsDeath)
             {
                 ShellGameOver = true;
+                WinGame();
             }
 
             EnemiesSpawnerLogic();
 
-            UpdateTimerText();
+            UpdateTopUi();
             CollectablesSpawnnerLogic();
             ShopController();
 
-
+            StageControll();
         }
 
         if (IsPaused) {
@@ -274,7 +363,7 @@ public class ShellStackGameManager : MonoBehaviour
         
         
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !ShopOpen)
         {
             TogglePause();
         }
@@ -386,6 +475,6 @@ public class ShellStackGameManager : MonoBehaviour
                 break;
         }
 
-        UpdateTimerText();
+        UpdateTopUi();
     }
 }

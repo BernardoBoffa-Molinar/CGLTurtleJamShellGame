@@ -62,7 +62,7 @@ public class UpgradeShopIconBase : MonoBehaviour
 
     public void SetUpIcon(Sprite icon, int Animal, int Power, string text)
     {
-        Debug.Log("Description: " + text);
+        //Debug.Log("Description: " + text);
         gameObject.SetActive(true);
         UpgradeIconImage.sprite = icon;
   

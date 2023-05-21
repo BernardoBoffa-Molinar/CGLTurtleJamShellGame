@@ -191,6 +191,7 @@ MonoBehaviour:
   GameController: {fileID: 0}
   SP: {fileID: 0}
   EnemySpeed: 10
+  EnemyIndex: 0
 --- !u!50 &7210048223272689533
 Rigidbody2D:
   serializedVersion: 4
@@ -227,4 +228,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 3
+  m_Radius: 4

@@ -157,7 +157,7 @@ public class HealhSystemInterface : MonoBehaviour
         if (shield <=0)
         {
             currentHealth -= (int)Mathf.Floor(damageAmount);
-            Debug.Log(gameObject.name +" has "+ currentHealth + " and took  damage : " + damageAmount);
+            //Debug.Log(gameObject.name +" has "+ currentHealth + " and took  damage : " + damageAmount);
 
             if (currentHealth <= 0)
             {
@@ -219,6 +219,7 @@ public class HealhSystemInterface : MonoBehaviour
         if(IsPlayer)
         {
             GameController.ShellGameOver = true;
+            GameController.WinGame();
         }
 
         
@@ -279,6 +280,7 @@ public class HealhSystemInterface : MonoBehaviour
             }
             else if (otherCollider2D.gameObject.CompareTag("CrabAttackArea")){
                 TakeDamage(PlayerController.CrabDamage);
+                GameController.PlaySoundInManager("CrabSlash");
                 TookDamage = true;
                 gameObject.GetComponent<SpriteRenderer>().color = Color.black;
                 ImmuneframeDuration = 0.5f;
@@ -289,6 +291,7 @@ public class HealhSystemInterface : MonoBehaviour
                 // Handle collision with the enemy
                 // ...
                 TakeDamage(PlayerController.TurtleDamage);
+                GameController.PlaySoundInManager("TurtleHit");
                 TookDamage = true;
                 gameObject.GetComponent<SpriteRenderer>().color = Color.black;
                 ImmuneframeDuration = 1f;

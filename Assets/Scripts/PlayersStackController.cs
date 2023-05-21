@@ -46,7 +46,7 @@ public class PlayersStackController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!GameManager.IsPaused && !GameManager.ShopOpen)
+        if (!GameManager.IsPaused && !GameManager.ShopOpen && !GameManager.ShellGameOver)
         {
             TurtleControll(Time.deltaTime);
             CrabControll(Time.deltaTime);
@@ -170,10 +170,11 @@ public class PlayersStackController : MonoBehaviour
 
     void BirdThrowEgg()
     {
+        GameManager.PlaySoundInManager("EggShoot");
         Vector3 SpawnEggPosition = BirdBody.transform.position + new Vector3( BirdAimDirection.x,BirdAimDirection.y,0f)* 0.25f;
 
         GameObject EggProjectile = Instantiate(BirdEggProjectile, SpawnEggPosition, Quaternion.identity);
-        EggProjectile.GetComponent<Rigidbody2D>().velocity =  -1 * BirdAimDirection * BirdThrowSpeed;
+        EggProjectile.GetComponent<Rigidbody2D>().velocity =  -1 * BirdAimDirection.normalized * BirdThrowSpeed;
         EggProjectile.GetComponent<EggProjectile>().SetDamage(BirdDamage);
     }
 
