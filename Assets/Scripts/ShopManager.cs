@@ -21,9 +21,6 @@ public class ShopManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-
-
         // Check if an instance already exists
         if (instance == null)
         {
@@ -31,14 +28,18 @@ public class ShopManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
             PlayerGO = GameObject.FindGameObjectWithTag("Player");
-            GameObject[] Temp = GameObject.FindGameObjectsWithTag("UIShopIcon");
+            UpgradeShopIconBase[] Temp = GameObject.FindObjectsOfType<UpgradeShopIconBase>();
             Debug.Log("Temp" + Temp.Length);
-            BuyOptionsArray = Temp;
+            int i = 0;
+            foreach(UpgradeShopIconBase up in Temp)
+            {
+                BuyOptionsArray.SetValue(up.gameObject, i++);
+            }
+
+            //BuyOptionsArray = Temp;
             PlayerIsInRange = false;
             StoreOpen = false;
             Debug.Log("options " + BuyOptionsArray.Length);
-
-
             GameManager = FindObjectOfType<ShellStackGameManager>();
             CreateNewShop();
         }
@@ -110,9 +111,8 @@ public class ShopManager : MonoBehaviour
             Sprite img = GetImgByAnimal(AnimalToSet);
 
             //Debug.Log(img.name);
-
-            UpgradeShopIconBase temp = BuyOptionsArray[i].GetComponent<UpgradeShopIconBase>();
-            temp.SetUpIcon(img, AnimalToSet, UpgradeToSet, GetDefinitionFromUpgradeIndexs(AnimalToSet, UpgradeToSet));
+            
+            BuyOptionsArray[i].GetComponent<UpgradeShopIconBase>().SetUpIcon(img, AnimalToSet, UpgradeToSet, GetDefinitionFromUpgradeIndexs(AnimalToSet, UpgradeToSet));
         }
 
        GameManager.UpdateTopUi();

@@ -68,6 +68,115 @@ public class ShellStackGameManager : MonoBehaviour
     public float ShopCooldown = 30f;
     public Vector3 ShopSpawnPosition;
 
+    private void Awake()
+    {
+        // Check if an instance already exists
+        if (instance == null)
+        {
+            // Set the instance to this object
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            // Destroy this object if another instance exists
+            Destroy(gameObject);
+        }
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        StartGame();
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        // game in play
+        if (!IsPaused && !ShellGameOver && !ShopOpen)
+        {
+            GameTimer -= Time.deltaTime;
+            if (GameTimer <= 0 || PlayerIsDeath)
+            {
+                ShellGameOver = true;
+                WinGame();
+            }
+
+            EnemiesSpawnerLogic();
+            UpdateTopUi();
+            CollectablesSpawnnerLogic();
+            ShopController();
+            StageControll();
+        }
+
+        if (IsPaused)
+        {
+            if (ShopOpen)
+            {
+                ShopMenu.SetActive(ShopOpen);
+                PauseMenu.SetActive(false);
+            }
+            else
+            {
+                ShopMenu.SetActive(false);
+                PauseMenu.SetActive(true);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape) && !ShopOpen)
+        {
+            TogglePause();
+        }
+
+        if (ShellGameOver)
+        {
+            EndGame();
+        }
+    }
+
+   
+   
+    
+    public void StartGame()
+    {
+        GameOverMenu.SetActive(false);
+        ShopMenu.SetActive(false);
+        PauseMenu.SetActive(false);
+        HPSlider.value = HealhSystem.currentHealth / HealhSystem.maxHealth;
+        ShellGameOver = false;
+        GroundGO = GameObject.FindGameObjectWithTag("LevelGround");
+        gameObject.transform.position = Vector3.zero + Vector3.forward;
+        StageDifficulty = 1f;
+        SnailsCount = 0;
+        // StageResources = 0;
+        IsPaused = false;
+        ShopOpen = false;
+        AudioManager = FindObjectOfType<AudioManager>();
+        PlaySoundInManager("MainMusic");
+        PlaySoundInManager("WavesSFX");
+        levelText.text = "Level " + 1 + (StageDifficulty - 1) / 0.25f;
+        PlayerController = GetComponent<PlayersStackController>();
+        HealhSystem = GetComponent<HealhSystemInterface>();
+        SMScript = FindObjectOfType<ShopManager>();
+        ShopGameObject = SMScript.gameObject;
+        if (PlayerController == null)
+        {
+            Debug.LogError("PlayerController component not found!");
+        }
+        SpawnCollectables();
+        SpawnEnemyWave();
+    }
+
+    public void EndGame()
+    {
+
+        GameOverMenu.SetActive(true);
+        ShopMenu.SetActive(false);
+        PauseMenu.SetActive(false);
+    }
 
 
     public void ReloadGame()
@@ -95,13 +204,10 @@ public class ShellStackGameManager : MonoBehaviour
         ShopSpawnPosition = gameObject.transform.position + new Vector3(ToSpawnDirX, ToSpawnDirY, 0).normalized * distance + Vector3.forward;
         ShopGameObject.transform.position = ShopSpawnPosition;
         SMScript.CreateNewShop();
-
     }
 
     void ShopController()
     {
-
-      
 
         ShopTimer += Time.deltaTime;
         if(ShopTimer < ShopDuration)
@@ -155,8 +261,6 @@ public class ShellStackGameManager : MonoBehaviour
             SpawnCollectables();
             CollectSpawnTimer = 0f;
         }
-
-
     }
     
     
@@ -200,7 +304,7 @@ public class ShellStackGameManager : MonoBehaviour
         }
         else
         {
-            GameOverMessage.text = "You Lose, Try Again :)";
+            GameOverMessage.text = "You Lose\n Try Again";
         }
 
     }
@@ -220,7 +324,6 @@ public class ShellStackGameManager : MonoBehaviour
     {
         for(int i = 0; i < EnemiesSpawnAmmount; i++)
         {
-            
             int EnemyToSpawn = Random.Range(0, EnemiesPrefab.Count);
             float EnemyToSpawnDirX = Random.Range(-1.0f, 1.0f);
             float EnemyToSpawnDirY = Random.Range(-1.0f, 1.0f);
@@ -232,21 +335,7 @@ public class ShellStackGameManager : MonoBehaviour
 
     }
 
-    private void Awake()
-    {
-        // Check if an instance already exists
-        if (instance == null)
-        {
-            // Set the instance to this object
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            // Destroy this object if another instance exists
-            Destroy(gameObject);
-        }
-    }
+   
 
     public void UpdateTopUi()
     {
@@ -259,51 +348,9 @@ public class ShellStackGameManager : MonoBehaviour
         HPSlider.value =  (float)HealhSystem.currentHealth / (float)HealhSystem.maxHealth;
     }
 
-    // Example method
-    public void StartGame()
-    {
-        // Logic for starting the game
-        // ...
-        GameOverMenu.SetActive(false);
-        ShopMenu.SetActive(false);
-        PauseMenu.SetActive( false);
-        HPSlider.value = HealhSystem.currentHealth / HealhSystem.maxHealth;
-        ShellGameOver = false;
-        GroundGO = GameObject.FindGameObjectWithTag("LevelGround");
-        gameObject.transform.position = Vector3.zero + Vector3.forward;
-        StageDifficulty = 1f;
-        SnailsCount = 0;
-       // StageResources = 0;
-        IsPaused = false;
-        ShopOpen = false;
-        AudioManager = FindObjectOfType<AudioManager>();
-        PlaySoundInManager("MainMusic");
-        PlaySoundInManager("WavesSFX");
+  
 
-
-        levelText.text = "Level " + 1 + (StageDifficulty-1)/0.25f;
-        PlayerController = GetComponent<PlayersStackController>();
-        HealhSystem = GetComponent<HealhSystemInterface>();
-        SMScript = FindObjectOfType<ShopManager>();
-        ShopGameObject = SMScript.gameObject;
-        if (PlayerController == null)
-        {
-            Debug.LogError("PlayerController component not found!");
-        }
-        SpawnCollectables();
-        SpawnEnemyWave();
-    }
-
-    // Example method
-    public void EndGame()
-    {
-        // Logic for ending the game    
-        // ...
-        GameOverMenu.SetActive(true);
-        ShopMenu.SetActive(false);
-        PauseMenu.SetActive(false);
-    }
-
+  
    
 
     public void PlaySoundInManager(string Sname)
@@ -316,69 +363,7 @@ public class ShellStackGameManager : MonoBehaviour
     }
 
 
-// Start is called before the first frame update
-    void Start()
-    {
-        StartGame();
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-        // game in play
-        if (!IsPaused && !ShellGameOver && !ShopOpen)
-        {
-            GameTimer -= Time.deltaTime;
-            if(GameTimer <= 0  || PlayerIsDeath)
-            {
-                ShellGameOver = true;
-                WinGame();
-            }
-
-            EnemiesSpawnerLogic();
-
-            UpdateTopUi();
-            CollectablesSpawnnerLogic();
-            ShopController();
-
-            StageControll();
-        }
-
-        if (IsPaused) {
-            if (ShopOpen)
-            {
-                ShopMenu.SetActive(ShopOpen);
-                PauseMenu.SetActive(false);
-            }
-            else
-            {
-                ShopMenu.SetActive(false);
-                PauseMenu.SetActive(true);
-            }
-        }
-
     
- 
-        
-        
-
-        if (Input.GetKeyDown(KeyCode.Escape) && !ShopOpen)
-        {
-            TogglePause();
-        }
-        
-
-
-        if (ShellGameOver)
-        {
-            EndGame();
-        }
-
-        
-    }
-
     public void RerollShopClick()
     {
         SMScript.RerollShop();
@@ -448,7 +433,10 @@ public class ShellStackGameManager : MonoBehaviour
                 switch (UpgradeId)
                 {
                     case 1:
+                       
                         PlayerController.CrabArea += 0.25f;
+                        GameObject.FindGameObjectWithTag("CrabAttackArea").GetComponent<BoxCollider2D>().size *= PlayerController.CrabArea;
+                        GameObject.FindGameObjectWithTag("CrabAttackArea").transform.localScale *= 1.25f;
                         break;
                     case 2:
                         PlayerController.CrabRotationSpeed += 5;

@@ -34,8 +34,26 @@ public class PlayersStackController : MonoBehaviour
     public GameObject BirdEggProjectile;
     public GameObject BirdBody;
     public bool canShoot = true;
+    public bool canMove = true;
     public float shootTimer = 0;
     public float shootCooldown = 1;
+
+    public Transform pointA;
+    public Transform pointB;
+    public float duration = 2f;
+    public string fire2Axis = "Fire2";
+
+    private float startTime;
+    private Vector3 initialLocalPosition;
+    private bool InAir = false;
+    public GameObject EggAimSprite;
+
+    public Vector3 FlyDirection;
+
+    public Sprite InAirBirdSprite;
+    public Sprite BirdSprite;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -131,28 +149,59 @@ public class PlayersStackController : MonoBehaviour
     }
 
 
-
-
-    void BirdControll(float dt)
+    void BirdAim()
     {
+
         Vector3 mousePosition = Input.mousePosition;
         mousePosition.z = 10;
 
         Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-
+        mousePosition.z = BirdBody.transform.position.z;
         Vector3 direction = worldPosition - transform.position;
         direction.Normalize();
         //Debug.Log(direction);
-        BirdAimDirection = new Vector2(direction.x,direction.y);
+        BirdAimDirection = new Vector2(direction.x, direction.y);
 
-        float targetAngle = Mathf.Atan2(BirdAimDirection.y, BirdAimDirection.x) * Mathf.Rad2Deg -90f;
+        float targetAngle = Mathf.Atan2(BirdAimDirection.y, BirdAimDirection.x) * Mathf.Rad2Deg - 90f;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
         BirdBody.transform.rotation = Quaternion.Lerp(BirdBody.transform.rotation, targetRotation, BirdThrowSpeed * Time.deltaTime);
 
-       if((Input.GetMouseButtonDown(0)|| Input.GetAxis("Fire1")> 0.1f) && canShoot)
+    }
+
+    void BirdControll(float dt)
+    {
+        
+       if((Input.GetMouseButtonDown(0) || Input.GetAxis("Fire1")> 0.1f) && canShoot && !InAir)
         {
             canShoot = false;
             BirdThrowEgg();
+        }
+
+
+        if (( Input.GetAxis("Fire2") > 0.1f))
+        {
+            canShoot = false;
+            if (!InAir)
+            {
+                InAir = true;
+                BirdBody.GetComponent<SpriteRenderer>().sprite = InAirBirdSprite;
+            }
+            BirdFly();
+        }
+        else
+        {
+            if (InAir)
+            {
+                BirdFlyBack();
+            }
+         
+        }
+
+
+        if (!InAir)
+        {
+            BirdAim();
+         
         }
 
         if (!canShoot)
@@ -166,7 +215,10 @@ public class PlayersStackController : MonoBehaviour
 
         }
 
+        EggAimSprite.SetActive(!InAir);
+
     }
+
 
 
     void BirdThrowEgg()
@@ -179,6 +231,55 @@ public class PlayersStackController : MonoBehaviour
         EggProjectile.GetComponent<EggProjectile>().SetDamage(BirdDamage);
     }
 
+
+
+    void BirdFly()
+    {
+        Vector3 localPosition = BirdBody.transform.localPosition;
+        Vector3 worldPosition = transform.TransformPoint(localPosition);
+
+        Vector3 mousePosition = Input.mousePosition;
+        mousePosition.z = 0f;
+        Vector3 targetWorldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+
+        Vector3 direction = targetWorldPosition - worldPosition;
+        direction.Normalize();
+        /*
+        Vector3 mousePosition = Input.mousePosition;
+        mousePosition.z = 1;
+
+        Vector3 worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+        Vector3 localPosition = BirdBody.transform.InverseTransformPoint(worldPosition);
+
+       // localPosition.z = BirdBody.transform.localPosition.z;
+        Vector3 direction = localPosition - BirdBody.transform.localPosition;
+        */
+        BirdBody.transform.localPosition += new Vector3(direction.x, direction.y, 0f).normalized * BirdThrowSpeed * Time.deltaTime;
+        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
+        BirdBody.transform.rotation = Quaternion.Lerp(BirdBody.transform.rotation, targetRotation, BirdThrowSpeed/2 * Time.deltaTime);
+
+
+    }
+
+    void BirdFlyBack()
+    {
+
+       
+        Vector3 flyBack = Vector3.zero - BirdBody.transform.localPosition;
+        if(flyBack.magnitude < 1f)
+        {
+            canShoot = true;
+        }
+
+        BirdBody.transform.localPosition += new Vector3(flyBack.x, flyBack.y, 0f).normalized * BirdThrowSpeed/2* Time.deltaTime;
+        
+        if (Vector3.Distance( BirdBody.transform.localPosition , Vector3.zero) <1f)
+        {
+            InAir = false;
+            BirdBody.GetComponent<SpriteRenderer>().sprite = BirdSprite;
+        }
+    }
 
 
   

@@ -1119,26 +1119,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Players2D
       objectReference: {fileID: 0}
-    - target: {fileID: 7183857699710079143, guid: d4fa25649ce4a964e866a2814da95b9c, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7183857699710079143, guid: d4fa25649ce4a964e866a2814da95b9c, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7794717408879424947, guid: d4fa25649ce4a964e866a2814da95b9c, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7794717408879424947, guid: d4fa25649ce4a964e866a2814da95b9c, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7794717408879424947, guid: d4fa25649ce4a964e866a2814da95b9c, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8106404289730522518, guid: d4fa25649ce4a964e866a2814da95b9c, type: 3}
       propertyPath: GroundGO
       value: 
