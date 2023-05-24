@@ -6,7 +6,7 @@ public class ResourceCollectable : Collectable
 {
    public float CollectableTimer;
    public ShellStackGameManager Manager;
-    public float SpeedRotation = 40f;
+    public float SpeedRotation;
 
     public override void Collect(GameObject CollidingObject)
     {
@@ -20,6 +20,8 @@ public class ResourceCollectable : Collectable
     // Start is called before the first frame update
     void Start()
     {
+        CollectableTimer = Random.Range(0.1f, 1.0f);
+        SpeedRotation = 5f;
         ColorChange = true;
         Manager = FindObjectOfType<ShellStackGameManager>();
         Destroy(gameObject, 10f);
@@ -39,7 +41,9 @@ public class ResourceCollectable : Collectable
             {
                 float THue = Mathf.Abs(Mathf.Sin(CollectableTimer));
                 gameObject.GetComponent<SpriteRenderer>().color = Color.Lerp(gameObject.GetComponent<SpriteRenderer>().color, Color.HSVToRGB(THue, 1, 1), (SpeedRotation / 2) * Time.deltaTime);
-                Quaternion targetRotation = Quaternion.Euler(0f, CollectableTimer * Mathf.Rad2Deg, 0f);
+               
+                
+                Quaternion targetRotation = Quaternion.Euler(0f, Mathf.Sin(CollectableTimer)* Mathf.Rad2Deg,0f);
                 gameObject.transform.rotation = Quaternion.Lerp(gameObject.transform.rotation, targetRotation, SpeedRotation * Time.deltaTime);
                 if (CollectableTimer >= 9f)
                 {

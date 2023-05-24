@@ -115,7 +115,7 @@ public class PlayersStackController : MonoBehaviour
 
             float targetAngle = Mathf.Atan2(TurtleMovement.y, TurtleMovement.x) * Mathf.Rad2Deg - 90f;
             Quaternion targetRotation = Quaternion.Euler(0f,0f, targetAngle);
-            TurtleBody.transform.rotation = Quaternion.Lerp(TurtleBody.transform.rotation, targetRotation, TurtleMovementSpeed * Time.deltaTime);
+            TurtleBody.transform.rotation = Quaternion.Lerp(TurtleBody.transform.rotation, targetRotation, TurtleMovementSpeed/3 * Time.deltaTime);
 
         }
         else
@@ -139,7 +139,7 @@ public class PlayersStackController : MonoBehaviour
         {
             float targetAngle = Mathf.Atan2(CrabAttackDirection.y, CrabAttackDirection.x) * Mathf.Rad2Deg;
             Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
-            CrabBody.transform.rotation = Quaternion.Lerp(CrabBody.transform.rotation, targetRotation, CrabRotationSpeed * Time.deltaTime);
+            CrabBody.transform.rotation = Quaternion.Lerp(CrabBody.transform.rotation, targetRotation, CrabRotationSpeed / 3 * Time.deltaTime);
         }
         else
         {
@@ -164,7 +164,7 @@ public class PlayersStackController : MonoBehaviour
 
         float targetAngle = Mathf.Atan2(BirdAimDirection.y, BirdAimDirection.x) * Mathf.Rad2Deg - 90f;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
-        BirdBody.transform.rotation = Quaternion.Lerp(BirdBody.transform.rotation, targetRotation, BirdThrowSpeed * Time.deltaTime);
+        BirdBody.transform.rotation = Quaternion.Lerp(BirdBody.transform.rotation, targetRotation, BirdThrowSpeed/3 * Time.deltaTime);
 
     }
 
@@ -257,7 +257,7 @@ public class PlayersStackController : MonoBehaviour
         BirdBody.transform.localPosition += new Vector3(direction.x, direction.y, 0f).normalized * BirdThrowSpeed * Time.deltaTime;
         float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
         Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
-        BirdBody.transform.rotation = Quaternion.Lerp(BirdBody.transform.rotation, targetRotation, BirdThrowSpeed/2 * Time.deltaTime);
+        BirdBody.transform.rotation = Quaternion.Lerp(BirdBody.transform.rotation, targetRotation, BirdThrowSpeed * Time.deltaTime);
 
 
     }
@@ -267,7 +267,7 @@ public class PlayersStackController : MonoBehaviour
 
        
         Vector3 flyBack = Vector3.zero - BirdBody.transform.localPosition;
-        if(flyBack.magnitude < 1f)
+        if(flyBack.magnitude < 0.1f)
         {
             canShoot = true;
         }

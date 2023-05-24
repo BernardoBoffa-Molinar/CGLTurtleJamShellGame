@@ -17,16 +17,21 @@ public class UpgradeShopIconBase : MonoBehaviour
     public TMP_Text CostText;
 
     public ShellStackGameManager GameManager;
+    public ShopManager ShopManager;
 
-    public int Maxcost = 30;
-    public int Mincost = 10;
+    public int Maxcost = 50;
+    public int Mincost = 25;
     public int ActualCost =0;
 
     // Start is called before the first frame update
     void Start()
     {
         GameManager = FindObjectOfType<ShellStackGameManager>();
+        ShopManager = FindObjectOfType<ShopManager>();
         ActualCost = Random.Range(Mincost, Maxcost);
+        ShopManager.CreateBuyOption(this);
+        Maxcost = 50;
+        Mincost = 25;
     }
 
     // Update is called once per frame
@@ -73,7 +78,7 @@ public class UpgradeShopIconBase : MonoBehaviour
        {
             GameManager.SnailsCount -= ActualCost;
             GameManager.PowerUp(CharacterIndex, UpgradeFunctionIndex);
-            gameObject.SetActive(false);
+            ShopManager.CreateBuyOption(this);
        }
 
     }

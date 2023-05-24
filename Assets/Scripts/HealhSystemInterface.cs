@@ -20,6 +20,7 @@ public class HealhSystemInterface : MonoBehaviour
     float targetAngle;
     public int EnemyIndex = 0;
     Vector2 MovementDirection;
+    public bool isSnaillDrop;
 
     private void Start()
     {
@@ -29,7 +30,7 @@ public class HealhSystemInterface : MonoBehaviour
             GameController = FindObjectOfType<ShellStackGameManager>();
             PlayerController = GetComponent<PlayersStackController>();
             currentHealth = maxHealth;
-            
+            TookDamage = false;
         }
         else
         {
@@ -37,6 +38,7 @@ public class HealhSystemInterface : MonoBehaviour
             PlayerController = FindObjectOfType<PlayersStackController>();
             SP = GetComponent<SpriteRenderer>();
             maxHealth *= GameController.StageDifficulty;
+            TookDamage = false;
             currentHealth = maxHealth;
            
         }
@@ -83,7 +85,7 @@ public class HealhSystemInterface : MonoBehaviour
                 Die();
             }
         }
-        else
+        else if(!isSnaillDrop)
         {
             if(currentHealth > 0 )
             {
@@ -144,10 +146,45 @@ public class HealhSystemInterface : MonoBehaviour
                         GetComponent<Rigidbody2D>().velocity = Vector2.zero;
                     }
                 }
-                
+
+            }
+            else
+            {
+                if (Vector3.Distance(gameObject.transform.position, GameController.transform.position) > 50)
+                {
+                    Destroy(gameObject);
+                };
+
             }
 
 
+        }
+        else
+        {
+            if (TookDamage)
+            {
+                ImmuneframeTimer += Time.deltaTime;
+                if (gameObject.GetComponent<SpriteRenderer>().color == Color.black)
+                {
+                    gameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+                }
+                else if (gameObject.GetComponent<SpriteRenderer>().color == Color.yellow)
+                {
+                    gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                }
+                else if (gameObject.GetComponent<SpriteRenderer>().color == Color.white)
+                {
+                    gameObject.GetComponent<SpriteRenderer>().color = Color.black;
+                }
+
+                if (ImmuneframeTimer >= ImmuneframeDuration)
+                {
+                    TookDamage = false;
+                    ImmuneframeTimer = 0f;
+                    gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                }
+
+            }
         }
       
     }
@@ -156,7 +193,7 @@ public class HealhSystemInterface : MonoBehaviour
     {
         if (shield <=0)
         {
-            currentHealth -= (int)Mathf.Floor(damageAmount);
+            currentHealth -= (int)damageAmount;
             //Debug.Log(gameObject.name +" has "+ currentHealth + " and took  damage : " + damageAmount);
 
             if (currentHealth <= 0)
@@ -212,8 +249,16 @@ public class HealhSystemInterface : MonoBehaviour
 
         if (!IsPlayer)
         {
-            GameController.SnailsCount += Random.Range(1,5);
-            Destroy(gameObject);
+            if (!isSnaillDrop)
+            {
+                GameController.SnailsCount += (2 + Random.Range(1, 5));
+                Destroy(gameObject);
+            }
+            else
+            {
+                GameController.SnailsCount += 25;
+                Destroy(gameObject);
+            }
         }
         
         if(IsPlayer)
@@ -230,7 +275,7 @@ public class HealhSystemInterface : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+
         if (IsPlayer)
         {
             //Player HealthSystem
@@ -245,24 +290,55 @@ public class HealhSystemInterface : MonoBehaviour
 
             }
 
-            
+
         }
         else
         {
-            
-            //Enemy HealthSystem
-            HandleEnemyCollisionsWithPlayer(collision);
-           
+            if (!TookDamage)
+            {
+                //Enemy HealthSystem
+                HandleEnemyCollisionsWithPlayer(collision);
+            }
+
+
         }
-         
+
     }
 
-    public void HandlePlayerCollisions()
+
+
+    private void OnTriggerStay2D(Collider2D collision)
     {
 
 
-    }
+        if (IsPlayer)
+        {
+            //Player HealthSystem
+            if (collision.gameObject.CompareTag("Enemy"))
+            {
+                if (!TookDamage)
+                {
+                    TakeDamage(10);
+                    TookDamage = true;
+                    SP.color = Color.black;
+                }
 
+            }
+
+
+        }
+        else
+        {
+            if (!TookDamage)
+            {
+                //Enemy HealthSystem
+                HandleEnemyCollisionsWithPlayer(collision);
+            }
+
+        
+        }
+
+    }
 
 
 
@@ -297,11 +373,6 @@ public class HealhSystemInterface : MonoBehaviour
                 gameObject.GetComponent<SpriteRenderer>().color = Color.black;
                 ImmuneframeDuration = 1f;
 
-            }else if (otherCollider2D.gameObject.GetComponent<HealhSystemInterface>() && otherCollider2D.gameObject.GetComponent<HealhSystemInterface>().IsPlayer == false)
-             {
-                    MovementDirection =  otherCollider2D.transform.position - gameObject.transform.position;
-                    TookDamage = true;
-                    ImmuneframeDuration = 0.5f;
             }
     }
 }

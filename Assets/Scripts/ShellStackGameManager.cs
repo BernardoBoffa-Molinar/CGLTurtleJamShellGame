@@ -12,6 +12,7 @@ public class ShellStackGameManager : MonoBehaviour
     public float StageDifficulty = 1;
     public int StageLevel =1;
     public int StageResources = 0;
+    public int StageShellsNeeded;
     public int SnailsCount = 100;
     private static ShellStackGameManager instance;
     public float GameTimer = 600f;
@@ -25,6 +26,7 @@ public class ShellStackGameManager : MonoBehaviour
 
 
     //UI Objects
+    public GameObject[] PlayerBuyOptionsUI;
     public TMP_Text timerText;
     public TMP_Text levelText;
 
@@ -82,6 +84,11 @@ public class ShellStackGameManager : MonoBehaviour
             // Destroy this object if another instance exists
             Destroy(gameObject);
         }
+    }
+
+    public void GetMoreTime(float timetoAdd)
+    {
+        GameTimer += timetoAdd;
     }
 
     // Start is called before the first frame update
@@ -143,17 +150,22 @@ public class ShellStackGameManager : MonoBehaviour
     public void StartGame()
     {
         GameOverMenu.SetActive(false);
-        ShopMenu.SetActive(false);
+        
         PauseMenu.SetActive(false);
         HPSlider.value = HealhSystem.currentHealth / HealhSystem.maxHealth;
         ShellGameOver = false;
+        StageLevel = 0;
         GroundGO = GameObject.FindGameObjectWithTag("LevelGround");
+        GroundGO.GetComponentInChildren<Renderer>().material = GroundMaterials[StageLevel % GroundMaterials.Length];
         gameObject.transform.position = Vector3.zero + Vector3.forward;
         StageDifficulty = 1f;
         SnailsCount = 0;
-        // StageResources = 0;
+        StageResources = 0;
+        StageShellsNeeded = 25;
         IsPaused = false;
         ShopOpen = false;
+        Walls = new List<GameObject>();
+        WallDistance = (int) WallPrefab.GetComponent<BoxCollider2D>().size.x;
         AudioManager = FindObjectOfType<AudioManager>();
         PlaySoundInManager("MainMusic");
         PlaySoundInManager("WavesSFX");
@@ -162,6 +174,11 @@ public class ShellStackGameManager : MonoBehaviour
         HealhSystem = GetComponent<HealhSystemInterface>();
         SMScript = FindObjectOfType<ShopManager>();
         ShopGameObject = SMScript.gameObject;
+        ShopMenu = SMScript.ShopUIMenu;
+        ShopMenu.SetActive(false);
+
+
+        BoxPlayerMap();
         if (PlayerController == null)
         {
             Debug.LogError("PlayerController component not found!");
@@ -178,6 +195,74 @@ public class ShellStackGameManager : MonoBehaviour
         PauseMenu.SetActive(false);
     }
 
+
+    public int  MapSize =20;
+    public GameObject WallPrefab;
+    public int WallDistance;
+    public List<GameObject> Walls;
+    public Sprite[] WallSprites;
+    public Transform MapCenter;
+    public void BoxPlayerMap()
+    {
+       
+        foreach(GameObject go in Walls)
+        {
+                
+                Destroy(go);
+ 
+
+        }
+        Walls.Clear();
+        
+        MapCenter = GroundGO.transform;
+
+
+        //Border
+        for(int i = 0; i<= MapSize; i++)
+        {
+            for(int j = 0; j <= MapSize; j++)
+            {
+                
+                if(j % MapSize == 0 || i% MapSize == 0 )
+                {
+                    GameObject WallSpawn = Instantiate(WallPrefab, MapCenter);
+                    WallSpawn.transform.localPosition += new Vector3((i - MapSize/2) * WallDistance ,(j- MapSize/2) * WallDistance,0.0f);
+                    WallSpawn.transform.localScale = Vector3.one;
+                    WallSpawn.GetComponent<SpriteRenderer>().sprite = WallSprites[Random.Range(0,WallSprites.Length)];
+                    WallSpawn.GetComponent<SpriteRenderer>().flipX = Random.Range(0, 2) ==1;
+                    Walls.Add(WallSpawn);
+
+                }
+
+            }
+        }
+
+        // Random Blobs
+
+        for(int Rocks = 0; Rocks<= 100; Rocks++)
+        {
+           
+            int Xoff = Random.Range(MapSize/2 * -1, MapSize/2);
+            int Yoff = Random.Range(MapSize/2 * -1, MapSize/2);
+
+            if(new Vector2(Xoff,Yoff).magnitude < 5)
+            {
+                Rocks--;
+            }
+            else
+            {
+                GameObject WallSpawn = Instantiate(WallPrefab, MapCenter);
+                WallSpawn.transform.localPosition += new Vector3(Xoff * WallDistance, Yoff * WallDistance, 0.0f);
+                WallSpawn.transform.localScale = Vector3.one;
+                WallSpawn.GetComponent<SpriteRenderer>().sprite = WallSprites[Random.Range(0, WallSprites.Length - 1)];
+                WallSpawn.GetComponent<SpriteRenderer>().flipX = Random.Range(0, 2) == 1;
+                Walls.Add(WallSpawn);
+            }
+
+
+        }
+
+    }
 
     public void ReloadGame()
     {
@@ -201,8 +286,8 @@ public class ShellStackGameManager : MonoBehaviour
         float ToSpawnDirX = Random.Range(-1.0f, 1.0f);
         float ToSpawnDirY = Random.Range(-1.0f, 1.0f);
         float distance = 30f;
-        ShopSpawnPosition = gameObject.transform.position + new Vector3(ToSpawnDirX, ToSpawnDirY, 0).normalized * distance + Vector3.forward;
-        ShopGameObject.transform.position = ShopSpawnPosition;
+        ShopSpawnPosition = gameObject.transform.localPosition + new Vector3(ToSpawnDirX, ToSpawnDirY, 0).normalized * distance + Vector3.forward;
+        ShopGameObject.transform.localPosition = ShopSpawnPosition;
         SMScript.CreateNewShop();
     }
 
@@ -231,15 +316,25 @@ public class ShellStackGameManager : MonoBehaviour
     {
         for (int i = 0; i < CollectablesAmmounts; i++)
         {
-            int CollectProbably = Random.Range(0, 100);
+            int CollectProbably = Random.Range(0, 101);
             int CollectToSpawn = 0;
-            if (CollectProbably > 90)
+            if (CollectProbably > 80)
             {
-                CollectToSpawn = CollectablesPrefab.Count-1;
+                CollectToSpawn = CollectablesPrefab.Count;
+                if (CollectProbably > 90)
+                {
+                    CollectToSpawn--;
+                }
+                else
+                {
+                    CollectToSpawn--;
+                    CollectToSpawn--;
+                }
+               
             }
             else
             {
-                CollectToSpawn = Random.Range(0, CollectablesPrefab.Count - 1);
+                CollectToSpawn = Random.Range(0, CollectablesPrefab.Count - 2);
 
             }
                      
@@ -262,30 +357,33 @@ public class ShellStackGameManager : MonoBehaviour
             CollectSpawnTimer = 0f;
         }
     }
+
+
     
-    
-    
+
     void StageControll()
     {
-        if (StageResources >= 50)
+        if (StageResources >= StageShellsNeeded)
         {
             StageLevel++;
             StageResources = 0;
             if (GroundGO)
             {
                 GroundGO.transform.position = gameObject.transform.position + Vector3.back;
-                GroundGO.GetComponent<Renderer>().material = GroundMaterials[StageLevel - 1];
-
+                GroundGO.GetComponentInChildren<Renderer>().material = GroundMaterials[StageLevel %GroundMaterials.Length];
             }
             else
             {
                 GroundGO =  GameObject.FindGameObjectWithTag("LevelGround");
                GroundGO.transform.position = gameObject.transform.position + Vector3.back;
-                GroundGO.GetComponent<Renderer>().material = GroundMaterials[StageLevel - 1];
+                GroundGO.GetComponent<Renderer>().material = GroundMaterials[StageLevel % GroundMaterials.Length];
 
             }
             StageDifficulty += 0.25f;
-            if(StageLevel ==GroundMaterials.Length +1)
+            EnemiesSpawnAmmount++;
+            StageShellsNeeded += 5;
+            BoxPlayerMap();
+            if (StageLevel ==GroundMaterials.Length)
             {
                 Winner = true;
                 WinGame();
@@ -340,10 +438,9 @@ public class ShellStackGameManager : MonoBehaviour
     public void UpdateTopUi()
     {
         timerText.text = "Timer: " + GameTimer.ToString("F0");
-        levelText.text = "Level " + StageLevel.ToString();
-
+        levelText.text = "Level " + (1+StageLevel).ToString();
         SnaillScoreText.text = SnailsCount.ToString();
-        StageResourcesScoreText.text = StageResources.ToString("F0") + "/50";
+        StageResourcesScoreText.text = StageResources.ToString("F0") + "/"+ StageShellsNeeded;
         HPText.text = "HP: " + HealhSystem.currentHealth + " / " + HealhSystem.maxHealth;
         HPSlider.value =  (float)HealhSystem.currentHealth / (float)HealhSystem.maxHealth;
     }
@@ -435,8 +532,8 @@ public class ShellStackGameManager : MonoBehaviour
                     case 1:
                        
                         PlayerController.CrabArea += 0.25f;
-                        GameObject.FindGameObjectWithTag("CrabAttackArea").GetComponent<BoxCollider2D>().size *= PlayerController.CrabArea;
-                        GameObject.FindGameObjectWithTag("CrabAttackArea").transform.localScale *= 1.25f;
+                        PlayerController.CrabAreaAttack.GetComponent<BoxCollider2D>().size *= PlayerController.CrabArea;
+                        PlayerController.CrabAreaAttack.transform.localScale *= 1.25f;
                         break;
                     case 2:
                         PlayerController.CrabRotationSpeed += 5;
